@@ -1,0 +1,39 @@
+# Local environment and secrets
+.env
+.env.*
+!.env.example
+*.credentials.*
+*.secrets.*
+*.key
+*.pem
+*.p12
+*.pfx
+
+# IDE and operating system
+.idea/
+.vs/
+.vscode/
+*.user
+*.suo
+.DS_Store
+Thumbs.db
+
+# Generated output
+bin/
+obj/
+build/
+dist/
+out/
+node_modules/
+coverage/
+artifacts/
+
+# Local logs and temporary files
+*.log
+*.tmp
+*.temp
+*.bak
+*.orig
+*.rej
+*.swp
+*~

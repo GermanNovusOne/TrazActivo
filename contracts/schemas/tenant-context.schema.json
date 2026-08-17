@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "tenant-context.schema.json",
+  "title": "TenantContext",
+  "description": "Contexto Data Plane construido y validado exclusivamente por el servidor.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "tenantId",
+    "userId",
+    "tenantMembershipId",
+    "legalEntityId",
+    "roles",
+    "permissions",
+    "locale",
+    "timeZone",
+    "correlationId",
+    "sessionId"
+  ],
+  "properties": {
+    "tenantId": { "type": "string", "minLength": 1 },
+    "userId": { "type": "string", "minLength": 1 },
+    "tenantMembershipId": { "type": "string", "minLength": 1 },
+    "legalEntityId": { "type": "string", "minLength": 1 },
+    "businessContextId": { "type": ["string", "null"] },
+    "accountingBookId": { "type": ["string", "null"] },
+    "roles": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "uniqueItems": true
+    },
+    "permissions": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "uniqueItems": true
+    },
+    "locale": { "type": "string", "minLength": 1 },
+    "timeZone": { "type": "string", "minLength": 1 },
+    "correlationId": { "type": "string", "minLength": 1 },
+    "sessionId": { "type": "string", "minLength": 1 }
+  }
+}
