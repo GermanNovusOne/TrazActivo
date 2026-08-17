@@ -11,7 +11,7 @@ pendientes; no equivale a implementación terminada.
 | SAAS-003 | Platform Management / provisioning | Baseline P0 |
 | TEN-001 | TenantContext schema / ADR-005 | Baseline P0 |
 | TEN-002 | Identity & Access / tenant switch | Baseline P0 |
-| SEC-001 | Security baseline / Identity & Access | Parcial; TBD-SEC-001/002 |
+| SEC-001 | Security baseline / Identity & Access | NO IMPLEMENTADO; TBD-SEC-001/002 |
 | SEC-002 | Identity & Access | Baseline P0 |
 | SEC-003 | Workflow / security baseline | Bloqueado por TBD-SEC-003 |
 | SEC-004 | Workflow / Identity & Access | Baseline P0 |
@@ -57,3 +57,20 @@ permisos/scopes, eventos/auditoría, errores, pruebas aplicables y ningún TBD P
 del módulo. Aplica el Definition of Done del Apéndice E.
 
 Fuente: PDD Apéndices A, D y E.
+
+## Evidencia ejecutable Sprint 1
+
+| ID | Evidencia Sprint 1 | Estado |
+|---|---|---|
+| SAAS-001 | Boundaries de Control Plane, contratos de tenancy y architecture tests; no existe Data Plane ni base compartida | Parcial |
+| SAAS-002 | Tenant, TenantCatalogEntry, lifecycle, catálogo en memoria y API de administración | Parcial; TBD-TEN-002 abierto |
+| SAAS-003 | Intención idempotente de provisionamiento hasta estado Provisioning | Parcial; sin recursos ni activación |
+| TEN-001 | ITenantResolver, TenantContext inmutable, factory/accessor y resultado con validación obligatoria | Sólo abstracciones; resolver real pendiente |
+| TEN-002 | Sin implementación de selección/cambio de tenant | No implementado |
+| SEC-001 | Autenticación por tenant, OIDC, MFA y membership | NO IMPLEMENTADO. El deny-by-default es foundation transversal de autorización; identity/MFA TBD abiertos |
+| AUD-001 | PlatformAudit append-only en adaptador de test, con operador, tenant objetivo, stamp, permiso, motivo, correlación y campos JIT | Parcial |
+| API-001 | API versionada, Idempotency-Key, ETag/If-Match, Problem Details, CorrelationId y OpenAPI contractual | Parcial implementado |
+| OBS-001 | Health live/ready y CorrelationId | Parcial implementado |
+
+No se mueve ningún requisito contable, de Policy Engine, depreciación, posting,
+ERP, PWA o infraestructura Azure a estado implementado en Sprint 1.

@@ -1,15 +1,34 @@
-# Catálogo API base
+# Catálogo API
 
-Este índice conserva el catálogo PDD. Los payloads detallados se versionarán
-por módulo antes de implementación.
+Este índice conserva el catálogo PDD y marca la superficie implementada en
+Sprint 1. Una ruta listada para etapas posteriores no equivale a implementación.
 
 ## Control Plane P0
 
-| Método | Ruta | Permiso | Auditoría |
+| Método | Ruta | Permiso | Auditoría | Sprint 1 |
+|---|---|---|---|---|
+| POST | `/control/v1/tenants` | `platform.tenants.create` | PlatformAudit | Implementado |
+| GET | `/control/v1/tenants/{id}` | `platform.tenants.read` | Lectura | Implementado como lectura/Location/ETag |
+| POST | `/control/v1/tenants/{id}/provision` | `platform.tenants.provision` | PlatformAudit | Implementado sólo como intención -> Provisioning |
+| POST | `/control/v1/tenants/{id}/suspend` | `platform.tenants.suspend` | PlatformAudit | Implementado; transición válida exige Active |
+
+La API no acepta referencias de DB/storage ni selección de stamp desde el
+cliente. El selector server-side de Sprint 1 no tiene configuración productiva.
+Por tanto, el endpoint de provisionamiento no crea recursos, no simula éxito y
+no activa el tenant.
+
+El documento OpenAPI describe autorización requerida, `Idempotency-Key`,
+`If-Match`, `ETag`, respuestas 400/401/403/404/409/415/428/503 aplicables y
+contenido `application/problem+json`. El esquema de autorización es sólo un
+contrato; SEC-001 e identity productiva permanecen no implementados.
+
+## Operación
+
+| Método | Ruta | Autorización | Sprint 1 |
 |---|---|---|---|
-| POST | `/control/v1/tenants` | `platform.tenants.create` | PlatformAudit |
-| POST | `/control/v1/tenants/{id}/provision` | `platform.tenants.provision` | PlatformAudit |
-| POST | `/control/v1/tenants/{id}/suspend` | `platform.tenants.suspend` | PlatformAudit |
+| GET | `/health/live` | Anónimo | Implementado |
+| GET | `/health/ready` | Anónimo | Implementado |
+| GET | `/openapi/v1.json` | Anónimo | Implementado |
 
 ## Contexto y patrimonio P0
 

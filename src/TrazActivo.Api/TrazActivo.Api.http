@@ -1,0 +1,16 @@
+@TrazActivo.Api_HostAddress = http://localhost:5108
+
+GET {{TrazActivo.Api_HostAddress}}/health/live
+Accept: application/json
+
+###
+
+GET {{TrazActivo.Api_HostAddress}}/health/ready
+Accept: application/json
+
+###
+
+GET {{TrazActivo.Api_HostAddress}}/openapi/v1.json
+Accept: application/json
+
+###

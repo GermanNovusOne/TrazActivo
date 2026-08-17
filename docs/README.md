@@ -12,6 +12,12 @@ desarrollo sin reemplazarla como fuente de verdad.
 - `security/`: threat model y controles de seguridad.
 - `testing/`: estrategia, cobertura y criterios bloqueantes.
 - `accounting/`: gobernanza normativa y golden dataset, sin reglas inventadas.
+- `implementation/`: evidencia y límites de cada sprint ejecutable.
+- `operations/`: uso local y restricciones operativas.
+
+La evidencia vigente está en
+`implementation/sprint-1-platform-foundation.md`; la ejecución local se detalla
+en `operations/local-development.md`.
 
 ## Regla de trazabilidad
 

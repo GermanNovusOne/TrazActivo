@@ -1,22 +1,30 @@
 # Matriz P0 de aislamiento multi-tenant
 
-| ID | Vector | Resultado obligatorio | Capa |
-|---|---|---|---|
-| MT-001 | IDOR con ID conocido | 404/403 sin fuga | API/security |
-| MT-002 | TenantId manipulado | Ignorado o rechazado | API/security |
-| MT-003 | Cambio A -> B | Sin contexto/cache/filtros/branding A | E2E |
-| MT-004 | Branding diferente | Configuración aislada | Visual/E2E |
-| MT-005 | Feature sólo A | Endpoint bloqueado en B | API |
-| MT-006 | ID/URL documento A en B | Acceso denegado | Storage/API |
-| MT-007 | Jobs A/B concurrentes | Sólo recursos correctos | Integration |
-| MT-008 | Tenant suspendido | Sesión/contexto bloqueados | E2E |
-| MT-009 | Sin membership | No selección ni contexto | Identity |
-| MT-010 | Restore A | B intacto | DR |
-| MT-011 | Buscar término B desde A | Sin resultados ni inferencia | Search |
-| MT-012 | Misma clave lógica A/B | Cache separado | Component |
-| MT-013 | Exports A/B concurrentes | Archivos/manifests separados | Jobs |
-| MT-014 | Host no verificado | No resolución/bloqueo | Routing |
-| MT-015 | Soporte plataforma sobre A | PlatformAudit con target A | Audit |
+| ID | Vector | Resultado obligatorio | Capa | Estado Sprint 1 |
+|---|---|---|---|---|
+| MT-001 | IDOR con ID conocido | 404/403 sin fuga | API/security | NotApplicableToSprint1 |
+| MT-002 | TenantId manipulado | Ignorado o rechazado | API/security | PARTIAL / Sprint1 scope |
+| MT-003 | Cambio A -> B | Sin contexto/cache/filtros/branding A | E2E | NotApplicableToSprint1 |
+| MT-004 | Branding diferente | Configuración aislada | Visual/E2E | NotApplicableToSprint1 |
+| MT-005 | Feature sólo A | Endpoint bloqueado en B | API | NotApplicableToSprint1 |
+| MT-006 | ID/URL documento A en B | Acceso denegado | Storage/API | NotApplicableToSprint1 |
+| MT-007 | Jobs A/B concurrentes | Sólo recursos correctos | Integration | NotApplicableToSprint1 |
+| MT-008 | Tenant suspendido | Sesión/contexto bloqueados | E2E | ImplementedPartialSprint1 |
+| MT-009 | Sin membership | No selección ni contexto | Identity | NotApplicableToSprint1 |
+| MT-010 | Restore A | B intacto | DR | NotApplicableToSprint1 |
+| MT-011 | Buscar término B desde A | Sin resultados ni inferencia | Search | NotApplicableToSprint1 |
+| MT-012 | Misma clave lógica A/B | Cache separado | Component | NotApplicableToSprint1 |
+| MT-013 | Exports A/B concurrentes | Archivos/manifests separados | Jobs | NotApplicableToSprint1 |
+| MT-014 | Host no verificado | No resolución/bloqueo | Routing | NotApplicableToSprint1 |
+| MT-015 | Soporte plataforma sobre A | PlatformAudit con target A | Audit | ImplementedSprint1 |
+
+Los estados Sprint 1 son evidencia limitada al alcance ejecutable actual. No
+constituyen aprobación de release. `MT-002` sólo prueba que entradas manipuladas
+no controlan la creación del catálogo de Control Plane; el caso canónico sigue
+pendiente hasta existir Tenant Resolver y Data Plane aplicables. `MT-008` sólo
+valida que un tenant suspendido no puede producir un resultado de resolución
+válido; sesión, resolver real y Data Plane siguen fuera de alcance. Todos los
+casos `NotApplicableToSprint1` permanecen P0 y pendientes, no aprobados.
 
 ## Dataset mínimo
 
