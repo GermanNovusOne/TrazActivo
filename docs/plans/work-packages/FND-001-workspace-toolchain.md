@@ -2,9 +2,11 @@
 
 ## Estado
 
-`READY`
+`DONE`
 
-Autorizada para implementación por Germán/Eduardo el 2026-08-18. `TBD-DEV-001` fue resuelto formalmente con Node.js 24 LTS como versión mayor aprobada.
+Autorizada para implementación por Germán/Eduardo el 2026-08-18. `TBD-DEV-001` fue resuelto
+formalmente con Node.js 24 LTS como versión mayor aprobada. El cierre fue aprobado humanamente tras
+la implementación y merge del PR #1 en `architecture/v1.1-typescript`.
 
 ## Objetivo
 
@@ -128,18 +130,18 @@ Desde un clon limpio, el workspace reconoce apps/packages, usa versiones fijadas
 
 ## Criterios de aceptación
 
-- [ ] Node/npm están fijados conforme a `TBD-DEV-001` cerrado.
-- [ ] Un clon limpio puede instalar con `npm ci` sin pasos ocultos.
-- [ ] Workspaces no permiten imports internos entre apps.
-- [ ] Los scripts raíz no contienen placeholders ni éxito simulado.
-- [ ] `npm run verify` retorna no cero si cualquier comando hijo falla.
-- [ ] Una suite aún no implementada no aparece como PASS.
+- [x] Node/npm están fijados conforme a `TBD-DEV-001` cerrado.
+- [x] Un clon limpio puede instalar con `npm ci` sin pasos ocultos.
+- [x] Workspaces no permiten imports internos entre apps.
+- [x] Los scripts raíz no contienen placeholders ni éxito simulado.
+- [x] `npm run verify` retorna no cero si cualquier comando hijo falla.
+- [x] Una suite aún no implementada no aparece como PASS.
 
 ## Casos negativos
 
-- [ ] Una versión Node distinta falla en preflight.
-- [ ] Un `.csproj`, comando `dotnet` o dependencia prohibida falla architecture/format gate.
-- [ ] Una prueba controlada de comando fallido produce salida no cero.
+- [x] Una versión Node distinta falla en preflight.
+- [x] Un `.csproj`, comando `dotnet` o dependencia prohibida falla architecture/format gate.
+- [x] Una prueba controlada de comando fallido produce salida no cero.
 
 ## Pruebas obligatorias
 
@@ -155,21 +157,33 @@ git diff --check
 
 ## Comandos locales
 
-No se ejecutan hasta cerrar `TBD-DEV-001` y aprobar la WP. Durante esta ejecución de planificación no se ejecuta npm.
+La implementación se ejecutó después de cerrar `TBD-DEV-001` y aprobar la WP. Durante este cierre
+documental no se ejecuta npm; se registra la evidencia humana aprobada de la ejecución ya realizada.
 
 ## Definition of Done
 
-- [ ] Build/tooling reproducible.
-- [ ] Lint y typecheck reales.
-- [ ] Architecture checks reales.
-- [ ] Contrato de integration/contract/multi-client/E2E/a11y/golden documentado.
-- [ ] Documentación de bootstrap.
-- [ ] Sin secretos ni dependencias sin justificar.
-- [ ] Sin TBD P0 aplicable.
+- [x] Build/tooling reproducible.
+- [x] Lint y typecheck reales.
+- [x] Architecture checks reales.
+- [x] Contrato de integration/contract/multi-client/E2E/a11y/golden documentado.
+- [x] Documentación de bootstrap.
+- [x] Sin secretos ni dependencias sin justificar.
+- [x] Sin TBD P0 aplicable.
 
 ## Evidencia esperada
 
 - Versiones fijadas, lockfile, árbol de workspaces, log de clon limpio y prueba de propagación de fallo.
+
+## Evidencia de cierre
+
+- PR #1 implementado y mergeado correctamente en `architecture/v1.1-typescript`.
+- Reporte de implementación: `docs/plans/reports/FND-001-report.md`.
+- `npm ci`: exit 0.
+- `npm run verify`: exit 0.
+- `npm run test:architecture`: 9/9.
+- `git diff --check`: exit 0.
+- No se implementó otra Work Package; FND-002, FND-003 y FND-004 permanecen `DRAFT` y no están
+  autorizadas.
 
 ## Riesgos
 
@@ -183,6 +197,5 @@ No se ejecutan hasta cerrar `TBD-DEV-001` y aprobar la WP. Durante esta ejecuci�
 
 ## Condiciones de bloqueo
 
-- `TBD-DEV-001` está cerrado y no constituye un bloqueo vigente.
-- Evidencia externa de BAS-001 ausente o inválida.
-- Dependencias propuestas sin justificación.
+- No quedan condiciones de bloqueo aplicables al cierre de FND-001.
+- `DEC-CICD-001` permanece Propuesta y fuera de alcance; no bloquea este cierre.

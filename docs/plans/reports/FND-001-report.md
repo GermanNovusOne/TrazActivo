@@ -8,14 +8,17 @@ fail-fast que conserva el código no cero del primer control fallido.
 
 - Work Package: `FND-001-workspace-toolchain`.
 - Estado de entrada: `READY`.
+- Estado de cierre: `DONE`.
 - Branch: `codex/FND-001-workspace-toolchain`.
 - Base: `architecture/v1.1-typescript`.
 - Gate 0: tag `foundation-pre-v1.1-typescript-2026-08-18` verificado en `ba0a3b5`.
 - Decisión habilitante: `DEC-DEV-001`, Node.js 24 LTS.
+- Evidencia de cierre: PR #1 implementado y mergeado correctamente en
+  `architecture/v1.1-typescript`; validación registrada en este reporte.
 
 No se implementó FND-002 ni otra WP.
 
-## Corrección acotada del Draft PR #1
+## Corrección acotada del PR #1
 
 - `test:golden` conserva `NOT_APPLICABLE_SCOPE` y queda asignado únicamente a QA-002 para la
   consolidación de aplicabilidad del Walking Skeleton.
@@ -184,7 +187,8 @@ No queda TBD P0 aplicable a FND-001.
 - `npm run local:up` y `npm run local:down`: pertenecen a FND-005; devuelven exit 2.
 - `npm run db:generate`, `db:migrate:local` y `db:seed:local`: pertenecen a DB-001/002/003;
   devuelven exit 2.
-- No se ejecutaron comandos `dotnet`, migraciones, despliegues, merge ni otra Work Package.
+- No se ejecutaron comandos `dotnet`, migraciones, despliegues ni otra Work Package. El único merge
+  posterior fue el PR #1 aprobado hacia `architecture/v1.1-typescript`.
 
 ## Trazabilidad
 
