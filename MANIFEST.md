@@ -1,0 +1,37 @@
+# Manifiesto de archivos
+
+- `AGENTS.md`
+- `MANIFEST.md`
+- `README.md`
+- `VALIDATION.md`
+- `docs/00-governance/decision-register.md`
+- `docs/00-governance/source-of-truth.md`
+- `docs/00-governance/tbd-register.md`
+- `docs/01-product/TrazActivo_PDD_v1.1_RC1.md`
+- `docs/01-product/design-system.md`
+- `docs/01-product/glossary.md`
+- `docs/01-product/mvp-scope.md`
+- `docs/02-architecture/adr/ADR-015-typescript-stack.md`
+- `docs/02-architecture/adr/ADR-016-client-model.md`
+- `docs/02-architecture/adr/ADR-017-openapi-contract.md`
+- `docs/02-architecture/adr/ADR-018-prisma-database-per-client.md`
+- `docs/02-architecture/adr/ADR-019-monorepo-boundaries.md`
+- `docs/02-architecture/adr/ADR-020-local-development.md`
+- `docs/02-architecture/adr/ADR-021-testing-baseline.md`
+- `docs/02-architecture/architecture-v1.1.md`
+- `docs/02-architecture/azure-deployment.md`
+- `docs/02-architecture/local-development.md`
+- `docs/02-architecture/repository-structure.md`
+- `docs/03-agent/implementation-agent-prompt.md`
+- `docs/03-agent/nightly-protocol.md`
+- `docs/03-agent/plan-template.md`
+- `docs/03-agent/planning-agent-prompt.md`
+- `docs/03-agent/work-package-template.md`
+- `docs/04-testing/client-isolation-matrix.md`
+- `docs/04-testing/golden-dataset-governance.md`
+- `docs/04-testing/local-verification.md`
+- `docs/04-testing/test-strategy.md`
+- `docs/05-planning/initial-backlog.md`
+- `docs/05-planning/roadmap-gates.md`
+- `docs/05-planning/walking-skeleton.md`
+- `docs/06-migration/current-foundation-to-v1.1.md`

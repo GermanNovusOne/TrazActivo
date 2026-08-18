@@ -1,54 +1,93 @@
-# TrazActivo
+# TrazActivo v1.1 Agent Baseline
 
-Base de trabajo para TrazActivo, una plataforma SaaS multi-tenant de gestión
-patrimonial y auxiliar contable.
+Este paquete es la baseline para planificar y desarrollar TrazActivo con un agente de software. Reemplaza el stack técnico anterior y conserva el dominio, los requisitos, los controles multi-cliente, el Policy Engine, la trazabilidad, la identidad visual y el alcance funcional del PDD.
 
-## Fuente de verdad
-
-El documento [TrazActivo_PDD_v1.0_RC1.md](TrazActivo_PDD_v1.0_RC1.md) es la
-fuente de verdad vigente. Los artefactos de este repositorio derivan de esa
-baseline y no pueden completar silenciosamente decisiones marcadas como TBD.
-
-## Estado actual
-
-El repositorio incorpora Sprint 1.5: Frontend Foundation sobre la baseline de
-Sprint 1. React, TypeScript y Vite entregan `/`, `/login` y `/preview` desde el
-mismo artefacto ASP.NET Core .NET 10. Identity y los módulos funcionales siguen
-sin implementar. El Control Plane conserva health, OpenAPI, Problem Details,
-CorrelationId, PlatformAudit, idempotencia y optimistic concurrency.
-
-Los adaptadores de persistencia son exclusivamente en memoria para
-`Development` y `Testing`; el arranque los rechaza en `Production`. No existe
-Data Plane funcional ni infraestructura productiva. En particular, no debe
-iniciarse el posting de depreciación hasta cerrar `TBD-ACC-002`,
-`TBD-ACC-003` y la matriz normativa del perfil piloto.
-
-## Estructura
+## Arquitectura bloqueada
 
 ```text
-contracts/   Contratos neutrales al stack
-database/    Estrategia y gates de migraciones por tenant
-docs/        Arquitectura, ADR, seguridad, dominio, pruebas y gobernanza
-infra/       Decisiones y límites de infraestructura; IaC aún bloqueado
-policies/    Gobernanza del Policy Engine y golden dataset
-src/         Backend .NET 10 y frontend React/Vite del monolito modular
-tests/       Especificaciones P0 y suites ejecutables de Sprint 1
+                              AZURE
+                                │
+                 ┌──────────────┴──────────────┐
+                 │                             │
+             FRONTEND                      BACKEND
+                 │                             │
+              Next.js                       NestJS
+              React                      TypeScript
+           TypeScript                        │
+                 │                         Swagger
+                 │                         OpenAPI
+                 │                             │
+                 └────────── REST API ─────────┤
+                                               │
+                                       Client Resolver
+                                               │
+                                        Client Catalog
+                                               │
+                                         ClientContext
+                                               │
+                                      Application Layer
+                                               │
+                                         Domain Layer
+                                               │
+                                        Policy Engine
+                                               │
+                                 Prisma DataSource Manager
+                                               │
+                           ┌───────────────────┼───────────────────┐
+                           │                   │                   │
+                       Cliente A           Cliente B           Cliente N
+                           │                   │                   │
+                        DB propia           DB propia           DB propia
 ```
 
-## Invariantes no negociables
+`Client Resolver` y `Client Catalog` aparecen antes de Prisma en el flujo ejecutable. La aplicación debe resolver y autorizar el cliente antes de abrir una conexión.
 
-- Monolito modular API-first.
-- Database-per-tenant y storage segregado por tenant.
-- Control Plane separado de Data Plane.
-- `TenantContext` construido y validado server-side.
-- Ningún `TenantId` enviado por frontend selecciona DB, storage, cache o índice.
-- Reglas contables sólo en backend/Policy Engine.
-- Pruebas MT-001 a MT-015 P0 y bloqueantes de release.
-- Eventos aprobados o contabilizados se revierten; no se borran.
+## Decisiones no negociables
 
-La baseline se mantiene en
-[docs/governance/sprint-0-status.md](docs/governance/sprint-0-status.md) y el
-alcance ejecutable se registra en
-[docs/implementation/sprint-1-platform-foundation.md](docs/implementation/sprint-1-platform-foundation.md).
-La foundation frontend se detalla en
-[docs/implementation/sprint-1-5-frontend-foundation.md](docs/implementation/sprint-1-5-frontend-foundation.md).
+- TypeScript de extremo a extremo.
+- Frontend Next.js, React y TypeScript.
+- Backend NestJS y TypeScript.
+- REST versionada con Swagger/OpenAPI.
+- Domain Layer y Policy Engine sin dependencias de framework o persistencia.
+- Prisma sólo después de construir `ClientContext`.
+- Una base propia por cliente.
+- TrazActivo Control separado del portal del cliente.
+- No desarrollar la nueva baseline en .NET.
+- No hacer merge ni despliegue productivo automático desde el agente.
+
+## Orden de lectura para el agente
+
+1. `AGENTS.md`.
+2. `docs/00-governance/source-of-truth.md`.
+3. `docs/01-product/TrazActivo_PDD_v1.1_RC1.md`.
+4. `docs/02-architecture/architecture-v1.1.md`.
+5. ADR aceptados.
+6. `docs/05-planning/roadmap-gates.md`.
+7. `docs/03-agent/planning-agent-prompt.md`.
+8. La Work Package autorizada.
+
+## Uso
+
+### Planificación
+
+Entregar al agente el repositorio y el archivo:
+
+```text
+docs/03-agent/planning-agent-prompt.md
+```
+
+El agente debe generar planes y Work Packages. No debe programar durante esa ejecución.
+
+### Implementación
+
+Entregar al agente una Work Package aprobada y:
+
+```text
+docs/03-agent/implementation-agent-prompt.md
+```
+
+Cada Work Package usa una branch y un Draft PR independientes.
+
+## Primer objetivo
+
+El primer resultado ejecutable es el walking skeleton de `AssetItem` con dos clientes locales y bases separadas. Debe probar frontend, backend, Client Resolver, Client Catalog, ClientContext, Domain Layer, Prisma, auditoría y aislamiento.
