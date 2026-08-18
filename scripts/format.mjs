@@ -22,6 +22,7 @@ const supportedExtensions = new Set([
 const ignoredDirectories = new Set(["coverage", "dist", "node_modules", "out"]);
 const selectedRootFiles = [
   ".prettierrc.json",
+  "README.md",
   "eslint.config.mjs",
   "package.json",
   "tsconfig.base.json",

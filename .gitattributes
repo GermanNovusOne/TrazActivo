@@ -1,0 +1,54 @@
+# Canonical LF policy for the v1.1 TypeScript toolchain and Markdown documentation.
+/.gitattributes text eol=lf
+/.editorconfig text eol=lf
+/.node-version text eol=lf
+/.npmrc text eol=lf
+/.nvmrc text eol=lf
+/.prettierrc.json text eol=lf
+/README.md text eol=lf
+/eslint.config.mjs text eol=lf
+/package.json text eol=lf
+/package-lock.json text eol=lf
+/tsconfig*.json text eol=lf
+/vitest*.mjs text eol=lf
+
+/apps/**/*.cjs text eol=lf
+/apps/**/*.css text eol=lf
+/apps/**/*.js text eol=lf
+/apps/**/*.json text eol=lf
+/apps/**/*.jsonc text eol=lf
+/apps/**/*.jsx text eol=lf
+/apps/**/*.md text eol=lf
+/apps/**/*.mjs text eol=lf
+/apps/**/*.mts text eol=lf
+/apps/**/*.ts text eol=lf
+/apps/**/*.tsx text eol=lf
+/apps/**/*.yaml text eol=lf
+/apps/**/*.yml text eol=lf
+
+/packages/**/*.cjs text eol=lf
+/packages/**/*.css text eol=lf
+/packages/**/*.js text eol=lf
+/packages/**/*.json text eol=lf
+/packages/**/*.jsonc text eol=lf
+/packages/**/*.jsx text eol=lf
+/packages/**/*.md text eol=lf
+/packages/**/*.mjs text eol=lf
+/packages/**/*.mts text eol=lf
+/packages/**/*.ts text eol=lf
+/packages/**/*.tsx text eol=lf
+/packages/**/*.yaml text eol=lf
+/packages/**/*.yml text eol=lf
+
+/scripts/**/*.cjs text eol=lf
+/scripts/**/*.js text eol=lf
+/scripts/**/*.json text eol=lf
+/scripts/**/*.jsonc text eol=lf
+/scripts/**/*.md text eol=lf
+/scripts/**/*.mjs text eol=lf
+/scripts/**/*.mts text eol=lf
+/scripts/**/*.ts text eol=lf
+/scripts/**/*.yaml text eol=lf
+/scripts/**/*.yml text eol=lf
+
+/docs/**/*.md text eol=lf

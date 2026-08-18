@@ -1,4 +1,4 @@
-import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
+import { mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { resolve } from "node:path";
 import { spawnSync } from "node:child_process";
@@ -69,6 +69,20 @@ describe("FND-001 architecture contract", () => {
         legacyRef: "foundation-pre-v1.1-typescript-2026-08-18",
       }),
     ).resolves.toEqual([]);
+  });
+
+  test("LF is canonical for the TypeScript toolchain without normalizing historical .NET", async () => {
+    const prettierConfig = JSON.parse(
+      await readFile(resolve(repositoryRoot, ".prettierrc.json"), "utf8"),
+    );
+    const attributes = await readFile(resolve(repositoryRoot, ".gitattributes"), "utf8");
+
+    expect(prettierConfig.endOfLine).toBe("lf");
+    expect(attributes).toContain("/scripts/**/*.mjs text eol=lf");
+    expect(attributes).toContain("/apps/**/*.ts text eol=lf");
+    expect(attributes).toContain("/packages/**/*.ts text eol=lf");
+    expect(attributes).toContain("/docs/**/*.md text eol=lf");
+    expect(attributes).not.toMatch(/\*\.(?:cs|csproj|sln|props|targets)\b/u);
   });
 
   test("a new prohibited stack project is rejected", async () => {

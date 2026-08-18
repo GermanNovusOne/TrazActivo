@@ -15,6 +15,16 @@ fail-fast que conserva el código no cero del primer control fallido.
 
 No se implementó FND-002 ni otra WP.
 
+## Corrección acotada del Draft PR #1
+
+- `test:golden` conserva `NOT_APPLICABLE_SCOPE` y queda asignado únicamente a QA-002 para la
+  consolidación de aplicabilidad del Walking Skeleton.
+- Se eliminó del owner el ID funcional interpretado erróneamente como Work Package; las fuentes de
+  producto y gobierno no fueron alteradas.
+- LF queda como terminador canónico del toolchain TypeScript y la documentación Markdown mediante
+  Prettier, EditorConfig y `.gitattributes`.
+- No se presenta el golden dataset como aprobado ni se normaliza el código histórico .NET.
+
 ## Objetivo cumplido
 
 - npm workspaces declarados exclusivamente como `apps/*` y `packages/*`.
@@ -34,7 +44,7 @@ No se implementó FND-002 ni otra WP.
 
 - `package.json`, `package-lock.json`.
 - `.nvmrc`, `.node-version`, `.npmrc`.
-- `.prettierrc.json`, `eslint.config.mjs`.
+- `.gitattributes`, `.editorconfig`, `.prettierrc.json`, `eslint.config.mjs`.
 - `tsconfig.base.json`, `tsconfig.json`.
 - `vitest.architecture.config.mjs`.
 
@@ -78,6 +88,8 @@ Artistic-2.0. No se agregaron dependencias runtime.
 - Se fijan versiones exactas; architecture test rechaza `latest`, `^`, `~` u otros rangos.
 - `.npmrc` habilita `engine-strict`, lockfile y `save-exact`.
 - `preinstall` ejecuta el preflight para detener `npm ci` con Node/npm incorrectos.
+- Git, EditorConfig y Prettier fijan LF para el toolchain TypeScript y Markdown; las extensiones
+  históricas .NET no están incluidas en la política de atributos.
 - `verify` ejecuta secuencialmente todas las capas exigidas y se detiene en el primer exit no cero.
 - El dispatcher ejecuta scripts reales de cada workspace cuando existen. La ausencia autorizada por
   el alcance actual genera estado explícito y propietario, nunca PASS.
@@ -95,12 +107,25 @@ Artistic-2.0. No se agregaron dependencias runtime.
 | `npm run format:check`                    | Exit 0    | Archivos seleccionados conformes                                       |
 | `npm run lint`                            | Exit 0    | ESLint, cero warnings permitidos                                       |
 | `npm run typecheck`                       | Exit 0    | `tsconfig.json` estricto; workspaces futuros declarados explícitamente |
-| `npm run test:architecture`               | Exit 0    | 1 archivo, 8 pruebas aprobadas                                         |
+| `npm run test:architecture`               | Exit 0    | 1 archivo, 9 pruebas aprobadas                                         |
 | `npm run verify`                          | Exit 0    | Todas las capas ejecutadas en orden; estados de scope preservados      |
 | `npm run verify:failure-probe`            | Exit 0    | Hijo controlado exit 73; verify propagó 73 y no continuó               |
 | `npm audit --audit-level=high`            | Exit 0    | 0 vulnerabilidades                                                     |
 | Clon aislado: `npm ci` + `npm run verify` | Exit 0    | Instalación y verificación completas fuera del working tree            |
 | `git diff --check`                        | Exit 0    | Sin whitespace errors                                                  |
+
+### Evidencia de la corrección
+
+- La búsqueda explícita del ID retirado no devuelve coincidencias en scripts, configuración,
+  límites de workspace ni documentación creada por FND-001. Las coincidencias globales restantes
+  están en fuentes de producto, gobierno, dominio y golden preexistentes, donde el texto es un ID
+  funcional o de caso de prueba y no una Work Package.
+- `git check-attr` devuelve `text: set` y `eol: lf` para toolchain, `apps/`, `packages/`, scripts y
+  Markdown. Una muestra `.cs` histórica permanece sin atributos y con CRLF en el working tree.
+- Los ocho archivos con cambios de contenido o política tienen cero secuencias CRLF; la
+  normalización adicional se limita a archivos FND-001 ya existentes dentro del alcance declarado.
+- `node_modules` no está trackeado ni aparece en `git status`; el escaneo de secretos de alta
+  confianza no obtuvo coincidencias; PDD y ADR no tienen cambios.
 
 ### Casos negativos automatizados
 
@@ -121,7 +146,8 @@ Artistic-2.0. No se agregaron dependencias runtime.
 - `test:multiclient`: `NOT_IMPLEMENTED_SCOPE`, propietario CLI-005/QA-001.
 - `test:e2e` y `test:a11y`: `NOT_IMPLEMENTED_SCOPE`, propietario QA-002.
 - `build`: `NOT_IMPLEMENTED_SCOPE`, propietario FND-002/FND-003.
-- `test:golden`: `NOT_APPLICABLE_SCOPE`, sin cálculo o política contable publicada.
+- `test:golden`: `NOT_APPLICABLE_SCOPE`, propietario QA-002; sin cálculo o política contable
+  publicada y sin golden dataset aprobado.
 
 Estos estados no constituyen PASS funcional, contable, multi-client, E2E, accesibilidad ni build.
 

@@ -1,5 +1,5 @@
 {
-  "endOfLine": "crlf",
+  "endOfLine": "lf",
   "printWidth": 100,
   "proseWrap": "preserve",
   "semi": true,

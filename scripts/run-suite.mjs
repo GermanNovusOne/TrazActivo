@@ -22,7 +22,7 @@ const contracts = {
     status: "NOT_IMPLEMENTED_SCOPE",
   },
   "test:golden": {
-    owner: "DEP-001,QA-002",
+    owner: "QA-002",
     reason:
       "no accounting policy or calculation surface is published in the walking skeleton scope",
     status: "NOT_APPLICABLE_SCOPE",

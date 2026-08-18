@@ -80,11 +80,20 @@ packages `common`, dependencias sin versión exacta y extensión de la foundatio
 `test:unit`, `test:integration`, `test:contract`, `test:multiclient`, `test:e2e`, `test:a11y` y
 `build` despachan scripts reales de workspaces cuando existen. Mientras la superficie no fue
 entregada, imprimen `NOT_IMPLEMENTED_SCOPE` con la WP propietaria. `test:golden` imprime
-`NOT_APPLICABLE_SCOPE` porque el walking skeleton no publica cálculo contable. Estos estados no se
-presentan como PASS.
+`NOT_APPLICABLE_SCOPE`, con QA-002 como WP propietaria de consolidar esa aplicabilidad, porque el
+walking skeleton no publica cálculo contable. Esto no aprueba ni publica un golden dataset. Estos
+estados no se presentan como PASS.
 
 Las WPs propietarias deben agregar los scripts de workspace y sus pruebas al entregar cada
 superficie. Un comando ejecutable que falla conserva su código no cero y `verify` no continúa.
+
+## Finales de línea
+
+LF es el terminador canónico del toolchain TypeScript y de la documentación Markdown. Prettier y
+EditorConfig usan LF, mientras `.gitattributes` fuerza `eol=lf` para los archivos raíz del
+toolchain, `apps/`, `packages/`, `scripts/` y `docs/**/*.md`, con independencia de
+`core.autocrlf`. La política no incluye extensiones del código histórico .NET y no realiza una
+renormalización masiva de ese legado.
 
 ## Foundation anterior
 
