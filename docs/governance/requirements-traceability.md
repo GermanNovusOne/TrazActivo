@@ -74,3 +74,18 @@ Fuente: PDD Apéndices A, D y E.
 
 No se mueve ningún requisito contable, de Policy Engine, depreciación, posting,
 ERP, PWA o infraestructura Azure a estado implementado en Sprint 1.
+
+## Evidencia ejecutable Sprint 1.5
+
+| ID | Evidencia Sprint 1.5 | Estado |
+|---|---|---|
+| API-001 | Tres rutas SPA literales, assets same-origin y regresión de prefijos backend reservados | Parcial; sin cliente API general |
+| OBS-001 | Consumo anónimo de live/ready con timeout y estado visible | Parcial; sin telemetría frontend productiva |
+| NFR-A11Y-001 | HTML semántico, teclado/foco, reduced motion, axe y contraste para páginas/componentes implementados | Parcial; no conformidad WCAG completa |
+| UX-001 | Sólo AppShell y EmptyState sin KPI ni datos | NO IMPLEMENTADO |
+| BRD-001 | Tokens base del producto; sin branding por tenant | NO IMPLEMENTADO |
+| SUB-001 | Sin sources, FeatureGuard ni PermissionGuard | NO IMPLEMENTADO |
+| TEN-002 | Sin TenantProvider, memberships ni cambio de tenant | NO IMPLEMENTADO |
+
+`MT-003` sigue NO IMPLEMENTADO. Sprint 1.5 no cambia el estado de ningún caso MT
+canónico ni declara una prueba de aislamiento aprobada.

@@ -11,11 +11,11 @@ baseline y no pueden completar silenciosamente decisiones marcadas como TBD.
 
 ## Estado actual
 
-El repositorio se encuentra en Sprint 1: foundation ejecutable del Control
-Plane sobre .NET 10. La solución implementa el modelo mínimo de Tenant y
-TenantCatalogEntry, lifecycle inicial, contratos de tenancy, API versionada,
-health, OpenAPI, Problem Details, CorrelationId, PlatformAudit, idempotencia y
-optimistic concurrency.
+El repositorio incorpora Sprint 1.5: Frontend Foundation sobre la baseline de
+Sprint 1. React, TypeScript y Vite entregan `/`, `/login` y `/preview` desde el
+mismo artefacto ASP.NET Core .NET 10. Identity y los módulos funcionales siguen
+sin implementar. El Control Plane conserva health, OpenAPI, Problem Details,
+CorrelationId, PlatformAudit, idempotencia y optimistic concurrency.
 
 Los adaptadores de persistencia son exclusivamente en memoria para
 `Development` y `Testing`; el arranque los rechaza en `Production`. No existe
@@ -31,7 +31,7 @@ database/    Estrategia y gates de migraciones por tenant
 docs/        Arquitectura, ADR, seguridad, dominio, pruebas y gobernanza
 infra/       Decisiones y límites de infraestructura; IaC aún bloqueado
 policies/    Gobernanza del Policy Engine y golden dataset
-src/         Foundation .NET 10 del Control Plane, tenancy y API
+src/         Backend .NET 10 y frontend React/Vite del monolito modular
 tests/       Especificaciones P0 y suites ejecutables de Sprint 1
 ```
 
@@ -50,3 +50,5 @@ La baseline se mantiene en
 [docs/governance/sprint-0-status.md](docs/governance/sprint-0-status.md) y el
 alcance ejecutable se registra en
 [docs/implementation/sprint-1-platform-foundation.md](docs/implementation/sprint-1-platform-foundation.md).
+La foundation frontend se detalla en
+[docs/implementation/sprint-1-5-frontend-foundation.md](docs/implementation/sprint-1-5-frontend-foundation.md).

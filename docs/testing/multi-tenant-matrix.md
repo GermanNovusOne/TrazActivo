@@ -40,3 +40,11 @@ operaciones. No deben imprimir secretos, tokens, OTP, connection strings ni
 payloads documentales.
 
 Fuente: PDD sección 41.3 y NFR-SEC-001.
+
+## Alcance Sprint 1.5
+
+La Frontend Foundation no incorpora TenantProvider, memberships, tenant
+switching, branding por tenant ni features. Por tanto `MT-003`, `MT-004`,
+`MT-005` y `MT-009` permanecen no aplicables y no aprobados. La SPA no conserva
+estado tenant-scoped; esta propiedad estructural es foundation solamente y no
+constituye evidencia del cambio A -> B requerido por `MT-003`.

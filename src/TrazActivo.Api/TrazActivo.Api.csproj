@@ -4,6 +4,7 @@
     <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <FrontendRoot>$(MSBuildProjectDirectory)\..\TrazActivo.Web\</FrontendRoot>
   </PropertyGroup>
 
   <ItemGroup>
@@ -14,5 +15,26 @@
     <ProjectReference Include="..\TrazActivo.ControlPlane.Application\TrazActivo.ControlPlane.Application.csproj" />
     <ProjectReference Include="..\TrazActivo.ControlPlane.Infrastructure\TrazActivo.ControlPlane.Infrastructure.csproj" />
   </ItemGroup>
+
+  <Target Name="BuildFrontend" BeforeTargets="Build" Condition="'$(DesignTimeBuild)' != 'true'">
+    <Error Condition="!Exists('$(FrontendRoot)package.json')" Text="TrazActivo.Web package.json was not found." />
+    <Exec Condition="!Exists('$(FrontendRoot)node_modules\.package-lock.json')"
+          WorkingDirectory="$(FrontendRoot)"
+          Command="npm ci" />
+    <Exec WorkingDirectory="$(FrontendRoot)" Command="npm run build" />
+  </Target>
+
+  <Target Name="IncludeFrontendInPublish"
+          BeforeTargets="ComputeFilesToPublish"
+          DependsOnTargets="BuildFrontend">
+    <ItemGroup>
+      <FrontendDistFiles Include="$(FrontendRoot)dist\**\*" />
+      <ResolvedFileToPublish Include="@(FrontendDistFiles)">
+        <RelativePath>wwwroot\%(RecursiveDir)%(Filename)%(Extension)</RelativePath>
+        <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+        <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      </ResolvedFileToPublish>
+    </ItemGroup>
+  </Target>
 
 </Project>

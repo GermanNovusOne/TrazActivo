@@ -22,8 +22,18 @@ El documento OpenAPI describe autorización requerida, `Idempotency-Key`,
 contenido `application/problem+json`. El esquema de autorización es sólo un
 contrato; SEC-001 e identity productiva permanecen no implementados.
 
-## Operación
+## Frontend público Sprint 1.5
 
+| Método | Ruta | Estado |
+|---|---|---|
+| GET | `/` | Landing pública |
+| GET | `/login` | Experiencia visual; Identity no implementada |
+| GET | `/preview` | AppShell DEV sin datos ni módulos funcionales |
+
+Las rutas son literales. No existe fallback SPA para rutas desconocidas bajo
+`/control`, `/api`, `/health` u `/openapi`.
+
+## Operación
 | Método | Ruta | Autorización | Sprint 1 |
 |---|---|---|---|
 | GET | `/health/live` | Anónimo | Implementado |

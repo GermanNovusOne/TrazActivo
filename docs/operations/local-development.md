@@ -3,22 +3,31 @@
 ## Prerrequisitos
 
 - .NET SDK 10.0.400 o un patch compatible permitido por `global.json`.
+- Node 24 y npm 11 compatibles con `src/TrazActivo.Web/package.json`.
 - Entorno `Development` o `Testing`.
 
 No se requieren connection strings, secretos, Azure CLI ni infraestructura
-externa para Sprint 1.
+externa para Sprint 1.5.
 
 ## Comandos
 
 ```powershell
+npm ci --prefix src/TrazActivo.Web
+npm run lint --prefix src/TrazActivo.Web
+npm run test --prefix src/TrazActivo.Web
+npm run build --prefix src/TrazActivo.Web
 dotnet restore TrazActivo.sln
 dotnet build TrazActivo.sln
 dotnet test TrazActivo.sln
 dotnet run --project src/TrazActivo.Api/TrazActivo.Api.csproj
 ```
 
-El perfil local publica HTTP en `http://localhost:5108`. Superficies anónimas:
+El perfil local publica HTTP en `http://localhost:5108`. El ambiente DEV actual
+es `https://dev.trazactivo.cl/`. Superficies anónimas:
 
+- `GET /`
+- `GET /login`
+- `GET /preview`
 - `GET /health/live`
 - `GET /health/ready`
 - `GET /openapi/v1.json`

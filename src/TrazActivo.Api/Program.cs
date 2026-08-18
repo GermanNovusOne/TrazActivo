@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.Extensions.FileProviders;
 using TrazActivo.Api.Endpoints;
 using TrazActivo.Api.Errors;
 using TrazActivo.Api.Observability;
@@ -47,7 +48,19 @@ builder.Services.AddSingleton<IAuthorizationMiddlewareResultHandler, ProblemDeta
 
 var app = builder.Build();
 
+IFileProvider frontendFileProvider = app.Environment.WebRootFileProvider;
+var sourceFrontendRoot = Path.GetFullPath(
+    Path.Combine(app.Environment.ContentRootPath, "..", "TrazActivo.Web", "dist"));
+if ((app.Environment.IsDevelopment() || app.Environment.IsEnvironment("Testing")) &&
+    File.Exists(Path.Combine(sourceFrontendRoot, "index.html")))
+{
+  var sourceFrontendProvider = new PhysicalFileProvider(sourceFrontendRoot);
+  frontendFileProvider = sourceFrontendProvider;
+  app.Lifetime.ApplicationStopped.Register(sourceFrontendProvider.Dispose);
+}
+
 app.UseMiddleware<CorrelationIdMiddleware>();
+app.UseStaticFiles(new StaticFileOptions { FileProvider = frontendFileProvider });
 app.UseStatusCodePages(async context =>
 {
   var httpContext = context.HttpContext;
@@ -81,6 +94,9 @@ app.MapHealthChecks("/health/ready", new()
 }).AllowAnonymous();
 app.MapOpenApi("/openapi/{documentName}.json").AllowAnonymous();
 app.MapControlPlaneTenantEndpoints();
+app.MapGet("/", () => FrontendIndex(frontendFileProvider)).AllowAnonymous();
+app.MapGet("/login", () => FrontendIndex(frontendFileProvider)).AllowAnonymous();
+app.MapGet("/preview", () => FrontendIndex(frontendFileProvider)).AllowAnonymous();
 
 app.Run();
 
@@ -89,6 +105,14 @@ static void AddPermissionPolicy(AuthorizationOptions options, string permission)
   options.AddPolicy(permission, policy => policy
       .RequireAuthenticatedUser()
       .RequireClaim(PlatformClaimTypes.Permission, permission));
+}
+
+static IResult FrontendIndex(IFileProvider fileProvider)
+{
+  var index = fileProvider.GetFileInfo("index.html");
+  return index.Exists && index.PhysicalPath is not null
+      ? Results.File(index.PhysicalPath, "text/html; charset=utf-8")
+      : Results.NotFound();
 }
 
 public partial class Program;

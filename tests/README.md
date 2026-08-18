@@ -15,3 +15,7 @@ Sprint 1 añade cuatro proyectos xUnit sobre .NET 10:
 Los demás escenarios MT se registran como `NotApplicableToSprint1`; no se
 consideran aprobados ni ejecutados. El objetivo de cobertura continúa sujeto a
 `NFR-MAINT-001` y no se completa silenciosamente.
+
+Sprint 1.5 añade tests frontend junto a sus componentes para landing, login,
+preview, health, timeout, teclado, axe y contraste. IntegrationTests verifica
+las tres rutas HTML y bloquea fallback SPA en prefijos backend reservados.

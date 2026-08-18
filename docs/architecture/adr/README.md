@@ -1,6 +1,6 @@
 # Architecture Decision Records
 
-| ADR | Decisión | Estado PDD |
+| ADR | Decisión | Estado |
 |---|---|---|
 | ADR-001 | Multi-tenant SaaS | Accepted |
 | ADR-002 | Database per tenant | Accepted, sujeto a costo |
@@ -16,6 +16,8 @@
 | ADR-012 | Frontend Design System | Accepted |
 | ADR-013 | Hosting runtime | Proposed / TBD-AZR-001 |
 | ADR-014 | Infrastructure as Code | Proposed / TBD-AZR-004 |
+| ADR-015 | React + TypeScript + Vite, same-host DEV | Accepted / Sprint 1.5 |
 
-Los estados replican el PDD RC1. Un ADR propuesto no autoriza seleccionar una
-alternativa durante implementación.
+ADR-001 a ADR-014 replican la baseline PDD RC1. ADR-015 registra la selección
+aprobada para Sprint 1.5 y no cierra `TBD-AZR-001`. Un ADR propuesto no autoriza
+seleccionar una alternativa durante implementación.

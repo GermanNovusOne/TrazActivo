@@ -18,3 +18,9 @@ Data Plane. La API es el composition root del monolito modular.
 Las pruebas de arquitectura impiden dependencias inversas y confirman que no
 existe un ensamblado Data Plane en Sprint 1. Infrastructure contiene sólo
 adaptadores en memoria y su registro falla fuera de `Development` o `Testing`.
+
+## Frontend Sprint 1.5
+
+`TrazActivo.Web` es un único paquete React + TypeScript + Vite. Compila una SPA
+estática que `TrazActivo.Api` sirve same-origin y copia al publish. No contiene
+Identity, TenantProvider, módulos Data Plane ni reglas de dominio.
