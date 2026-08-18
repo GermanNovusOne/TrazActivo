@@ -13,6 +13,7 @@
 | DEC-PLAT-001 | Control Plane separado de Data Plane | Aceptada | Arquitectura | Web/API/permisos/auditoría separados |
 | DEC-REPO-001 | Monorepo TypeScript | Aceptada | Desarrollo | Apps desplegables y packages compartidos |
 | DEC-TEST-001 | Dos DB locales reales para aislamiento | Aceptada | QA/Seguridad | Cliente A y B obligatorios |
+| DEC-DEV-001 | Node.js 24 LTS como versión mayor de runtime y desarrollo para TrazActivo v1.1 (cierre de `TBD-DEV-001`) | Aceptada | Germán/Eduardo - Arquitectura | Habilita `FND-001` y el primer `npm install`/`npm ci` |
 | DEC-AZR-001 | Azure Chile Central como región primaria objetivo | Propuesta heredada | Arquitectura | Validar servicios y SKU antes de prod |
 | DEC-AZR-002 | App Service versus Container Apps | Pendiente | Arquitectura/DevOps | Resolver antes de Azure DEV |
 | DEC-IAC-001 | Bicep como IaC | Propuesta | DevOps | Aprobar antes de infra definitiva |
