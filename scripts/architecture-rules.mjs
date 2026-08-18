@@ -7,6 +7,7 @@ import { readJson } from "./toolchain.mjs";
 const ignoredDirectories = new Set([
   ".git",
   ".idea",
+  ".next",
   ".vs",
   ".vscode",
   "artifacts",
@@ -308,6 +309,16 @@ export async function validateRepository(root, { legacyRef } = {}) {
 
     if (record.kind === "app" && record.manifest.private !== true) {
       violations.push(`APP_MUST_BE_PRIVATE ${record.path}`);
+    }
+
+    const nextFrontend = new Set(["apps/control-web", "apps/portal-web"]).has(
+      record.relativeDirectory,
+    );
+    if (
+      nextFrontend &&
+      record.manifest.scripts?.typecheck !== "next typegen && tsc --project tsconfig.json --noEmit"
+    ) {
+      violations.push(`NEXT_TYPECHECK_NOT_REPRODUCIBLE ${record.path}`);
     }
   }
 

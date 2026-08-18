@@ -9,7 +9,7 @@
     "start": "next start --port 3000",
     "test:a11y": "vitest run --config vitest.a11y.config.ts",
     "test:unit": "vitest run --config vitest.config.ts",
-    "typecheck": "tsc --project tsconfig.json --noEmit"
+    "typecheck": "next typegen && tsc --project tsconfig.json --noEmit"
   },
   "dependencies": {
     "@trazactivo/design-system": "0.0.0",

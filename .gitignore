@@ -20,6 +20,7 @@ Thumbs.db
 
 # Generated output
 .next/
+apps/*/next-env.d.ts
 *.tsbuildinfo
 bin/
 obj/

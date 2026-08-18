@@ -30,6 +30,22 @@ npm run build --workspace apps/portal-web
 npm run build --workspace apps/control-web
 ```
 
+## Typecheck reproducible
+
+`next-env.d.ts` es un artefacto administrado por Next.js: permanece en el `include` de cada
+`tsconfig.json`, pero no se versiona ni se edita manualmente. La regla
+`apps/*/next-env.d.ts` de `.gitignore` evita incorporarlo accidentalmente.
+
+El typecheck de cada shell genera primero los tipos oficiales de Next.js y luego ejecuta
+TypeScript estricto:
+
+```text
+next typegen && tsc --project tsconfig.json --noEmit
+```
+
+Los `tsconfig.json` incluyen `.next/types/**/*.ts`. Por ello `npm run typecheck` funciona desde un
+checkout limpio sin requerir un `.next` previo ni ejecutar antes `next dev` o `next build`.
+
 ## Separación y dependencias
 
 - Ninguna app importa o declara como dependencia a la otra.

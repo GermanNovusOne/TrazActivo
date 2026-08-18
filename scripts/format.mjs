@@ -20,6 +20,7 @@ const supportedExtensions = new Set([
   ".yml",
 ]);
 const ignoredDirectories = new Set([".next", "build", "coverage", "dist", "node_modules", "out"]);
+const ignoredFileNames = new Set(["next-env.d.ts"]);
 const selectedRootFiles = [
   ".prettierrc.json",
   "README.md",
@@ -63,7 +64,11 @@ async function collectFiles(directory) {
       continue;
     }
 
-    if (entry.isFile() && supportedExtensions.has(extname(entry.name).toLowerCase())) {
+    if (
+      entry.isFile() &&
+      !ignoredFileNames.has(entry.name) &&
+      supportedExtensions.has(extname(entry.name).toLowerCase())
+    ) {
       files.push(absolutePath);
     }
   }

@@ -1,3 +1,4 @@
+import { execFileSync } from "node:child_process";
 import { mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { resolve } from "node:path";
@@ -82,8 +83,67 @@ describe("FND-002 frontend boundaries", () => {
     expect(controlManifest.dependencies).toMatchObject({
       "@trazactivo/design-system": "0.0.0",
     });
+    expect(portalManifest.scripts.typecheck).toBe(
+      "next typegen && tsc --project tsconfig.json --noEmit",
+    );
+    expect(controlManifest.scripts.typecheck).toBe(
+      "next typegen && tsc --project tsconfig.json --noEmit",
+    );
     expect(portalManifest.dependencies).not.toHaveProperty("control-web");
     expect(controlManifest.dependencies).not.toHaveProperty("portal-web");
+
+    for (const app of ["portal-web", "control-web"]) {
+      const tsconfig = JSON.parse(
+        await readFile(resolve(repositoryRoot, `apps/${app}/tsconfig.json`), "utf8"),
+      );
+      expect(tsconfig.include).toContain("next-env.d.ts");
+      expect(tsconfig.include).toContain(".next/types/**/*.ts");
+      expect(tsconfig.exclude).not.toContain(".next");
+    }
+  });
+
+  test("next-env.d.ts is generated, ignored and never tracked", async () => {
+    const ignoredFiles = execFileSync(
+      "git",
+      ["check-ignore", "apps/portal-web/next-env.d.ts", "apps/control-web/next-env.d.ts"],
+      { cwd: repositoryRoot, encoding: "utf8" },
+    )
+      .split(/\r?\n/u)
+      .filter(Boolean);
+    const trackedFiles = execFileSync(
+      "git",
+      ["ls-files", "--", "apps/portal-web/next-env.d.ts", "apps/control-web/next-env.d.ts"],
+      { cwd: repositoryRoot, encoding: "utf8" },
+    )
+      .split(/\r?\n/u)
+      .filter(Boolean);
+
+    expect(ignoredFiles).toEqual([
+      "apps/portal-web/next-env.d.ts",
+      "apps/control-web/next-env.d.ts",
+    ]);
+    expect(trackedFiles).toEqual([]);
+  });
+
+  test("a Next.js typecheck without typegen is rejected", async () => {
+    const root = await fixture({
+      "apps/portal-web/package.json": JSON.stringify({
+        dependencies: {
+          next: "16.3.1",
+        },
+        name: "@trazactivo/portal-web",
+        private: true,
+        scripts: {
+          typecheck: "tsc --project tsconfig.json --noEmit",
+        },
+        version: "0.0.0",
+      }),
+      "package.json": rootManifest(),
+    });
+
+    expect(await validateRepository(root)).toContain(
+      "NEXT_TYPECHECK_NOT_REPRODUCIBLE apps/portal-web/package.json",
+    );
   });
 
   test("an import between frontend applications is rejected", async () => {

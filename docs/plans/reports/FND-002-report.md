@@ -24,12 +24,15 @@ No se implementó FND-003, FND-004, FND-005 ni otra Work Package.
 - Portal no muestra navegación del Control Plane y Control no muestra navegación del portal.
 - No existen llamadas API, Prisma, DTO internos, connection strings ni estado de negocio.
 - Las suites reales de componente, arquitectura y accesibilidad están integradas al contrato raíz.
+- El typecheck de ambos shells es reproducible desde un checkout limpio mediante `next typegen`,
+  sin depender de un `.next` previo, `next dev` o `next build`.
 
 ## Archivos creados o modificados
 
 ### Shell del portal
 
-- `apps/portal-web/package.json`, `next.config.ts`, `next-env.d.ts` y `tsconfig.json`.
+- `apps/portal-web/package.json`, `next.config.ts` y `tsconfig.json`.
+- `apps/portal-web/next-env.d.ts` se retiró de Git; Next.js lo genera y `.gitignore` lo excluye.
 - `apps/portal-web/AGENTS.md` y `CLAUDE.md`, generados por Next.js para su documentación local.
 - `apps/portal-web/app/layout.tsx`, `page.tsx`, `loading.tsx`, `error.tsx` y
   `app/health/page.tsx`.
@@ -37,7 +40,8 @@ No se implementó FND-003, FND-004, FND-005 ni otra Work Package.
 
 ### Shell de Control
 
-- `apps/control-web/package.json`, `next.config.ts`, `next-env.d.ts` y `tsconfig.json`.
+- `apps/control-web/package.json`, `next.config.ts` y `tsconfig.json`.
+- `apps/control-web/next-env.d.ts` se retiró de Git; Next.js lo genera y `.gitignore` lo excluye.
 - `apps/control-web/AGENTS.md` y `CLAUDE.md`, generados por Next.js para su documentación local.
 - `apps/control-web/app/layout.tsx`, `page.tsx`, `loading.tsx`, `error.tsx` y
   `app/health/page.tsx`.
@@ -96,6 +100,13 @@ nuevas fueron revisadas con licencias MIT; `npm audit` no reportó vulnerabilida
 - Las configuraciones Vitest transforman JSX mediante el runtime automático y mantienen
   `passWithNoTests: false`.
 - Los gates raíz ignoran `.next` y outputs generados en cualquier workspace, sin excluir fuentes.
+- `next-env.d.ts` permanece en `tsconfig.include` porque Next.js lo requiere, pero la regla
+  `apps/*/next-env.d.ts` impide versionarlo y el formatter omite este archivo generado.
+- El typecheck de cada shell ejecuta
+  `next typegen && tsc --project tsconfig.json --noEmit`; `.next/types/**/*.ts` está incluido y
+  `.next` ya no está excluido por los `tsconfig`.
+- Architecture tests comprueban que `next-env.d.ts` esté ignorado y no trackeado, que ambos
+  manifests usen typegen antes de `tsc` y que una configuración sin typegen sea rechazada.
 - Los archivos de guía local creados automáticamente por `next dev` se conservan para que nuevas
   ejecuciones no ensucien el working tree.
 
@@ -104,21 +115,43 @@ nuevas fueron revisadas con licencias MIT; `npm audit` no reportó vulnerabilida
 | Comando                                             | Resultado | Evidencia                                                  |
 | --------------------------------------------------- | --------- | ---------------------------------------------------------- |
 | `npm ci`                                            | Exit 0    | 256 packages instalados; 260 auditados; 0 vulnerabilidades |
-| `npm run format:check`                              | Exit 0    | 70 archivos seleccionados conformes                        |
+| `npm run format:check`                              | Exit 0    | 69 archivos seleccionados conformes                        |
 | `npm run lint`                                      | Exit 0    | ESLint sin errores ni warnings                             |
 | `npm run typecheck`                                 | Exit 0    | Raíz y tres workspaces conformes                           |
 | `npm run test:unit`                                 | Exit 0    | 4 archivos, 12 pruebas aprobadas                           |
-| `npm run test:architecture`                         | Exit 0    | 2 archivos, 12 pruebas aprobadas                           |
+| `npm run test:architecture`                         | Exit 0    | 2 archivos, 14 pruebas aprobadas                           |
 | `npm run test:a11y`                                 | Exit 0    | 3 archivos, 5 pruebas axe aprobadas                        |
 | `npm run build --workspace apps/portal-web`         | Exit 0    | Build independiente; `/` y `/health` estáticas             |
 | `npm run build --workspace apps/control-web`        | Exit 0    | Build independiente; `/` y `/health` estáticas             |
 | `npm run build`                                     | Exit 0    | Control, portal y design-system construidos                |
 | `npm run verify`                                    | Exit 0    | `CONTROLS_EXECUTED_WITH_EXPLICIT_SCOPE_STATUSES`           |
+| `npm audit --audit-level=high`                      | Exit 0    | 0 vulnerabilidades                                         |
 | Portal y Control simultáneos en puertos 3000 y 3001 | Exit 0    | Ambos respondieron HTTP 200 con títulos propios            |
 | `git diff --check`                                  | Exit 0    | Sin errores de whitespace                                  |
 
 `verify` mantuvo `test:integration`, `test:contract`, `test:multiclient` y `test:e2e` como
 `NOT_IMPLEMENTED_SCOPE`, y `test:golden` como `NOT_APPLICABLE_SCOPE`. No se presentan como PASS.
+
+## Evidencia de checkout limpio
+
+Se creó un worktree temporal detached del commit técnico de esta corrección y se eliminó después
+de conservar los resultados. La secuencia comprobó:
+
+1. Antes de `npm ci`: 0 directorios `.next`, 0 archivos `next-env.d.ts` y 0 archivos
+   `next-env.d.ts` trackeados.
+2. `npm ci`: exit 0; 256 packages instalados, 260 auditados y 0 vulnerabilidades.
+3. Inmediatamente antes de typecheck: seguían existiendo 0 directorios `.next` y 0 archivos
+   `next-env.d.ts`; no se había ejecutado build ni dev.
+4. `npm run typecheck`: exit 0; `next typegen` generó tipos y `next-env.d.ts` para Control y portal
+   antes de ejecutar `tsc`.
+5. Después de typecheck: 2 directorios `.next/types`, 2 archivos `next-env.d.ts` generados y 0
+   `next-env.d.ts` trackeados.
+6. `npm run test:unit`: 12/12; `npm run test:architecture`: 14/14; `npm run test:a11y`: 5/5.
+7. `npm run build`: exit 0; `npm run verify`: exit 0; `git diff --check`: exit 0.
+8. `git status --short`: sin cambios; `.next`, `node_modules` y `next-env.d.ts` permanecieron
+   ignorados y no trackeados.
+
+Esto demuestra que `npm run typecheck` no necesita artefactos de build o dev preexistentes.
 
 ## Criterios de aceptación
 
@@ -140,6 +173,9 @@ No queda criterio de aceptación pendiente dentro del alcance de FND-002.
 - El portal no contiene “Administración SaaS”; Control no contiene “Gestión patrimonial”.
 - Errores construidos con connection strings y stack sintéticos no aparecen en el DOM.
 - Las suites no permiten archivos vacíos ni skips para obtener verde.
+- Un shell Next.js cuyo typecheck omite `next typegen` genera
+  `NEXT_TYPECHECK_NOT_REPRODUCIBLE`.
+- El gate comprueba que ningún `apps/*/next-env.d.ts` esté trackeado.
 
 ## Evidencia de accesibilidad y navegación
 
@@ -174,6 +210,7 @@ No queda criterio de aceptación pendiente dentro del alcance de FND-002.
 | Mezclar portal y Control Plane               | Apps, navegación, metadata, procesos y tests separados | Mantener gate app→app en WPs futuras         |
 | Ocultar defectos con suites vacías           | `passWithNoTests: false` y conteos reales              | Agregar regresiones al ampliar componentes   |
 | Artefactos `.next` contaminan gates raíz     | Excludes recursivos en formato y ESLint                | Revisar nuevos outputs al agregar toolchains |
+| `next-env.d.ts` vuelve a versionarse         | `.gitignore`, git check y regresión de arquitectura    | Mantener el control al sumar shells Next.js  |
 | Contraste o teclado degradado posteriormente | Tests de tokens, user-event, axe y estilos de foco     | E2E cross-browser pertenece a QA-002         |
 
 ## Limitaciones y pendientes
