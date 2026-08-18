@@ -37,12 +37,16 @@ Packages construibles con responsabilidades explícitas y una suite que falla an
 
 ### Incluye
 
-- `domain`, `client-context`, `authorization`, `contracts`, `design-system`, `observability` y `testkit` mínimos.
+- Creación inicial de `domain`, `client-context`, `authorization`, `contracts`, `observability` y
+  `testkit` mínimos.
 - Boundary de `policy-engine` sin reglas publicadas ni cálculos.
+- Validación de límites arquitectónicos de `packages/design-system` ya creado por FND-002 y consumo
+  o extensión de interfaces existentes únicamente cuando el scope de FND-004 lo requiera.
 - Tests de imports, framework independence y stack prohibido.
 
 ### No incluye
 
+- Crear o recrear `packages/design-system` ni sus design tokens mínimos.
 - Package genérico `common`.
 - Modelos Prisma o DTO NestJS expuestos al frontend.
 - Reglas contables, AssetItem funcional o adaptadores Azure.
@@ -54,6 +58,8 @@ Packages construibles con responsabilidades explícitas y una suite que falla an
 ## Precondiciones
 
 - Responsabilidad y consumidores de cada package documentados.
+- La ausencia de `packages/design-system` no autoriza a FND-004 a crearlo; su creación inicial
+  pertenece exclusivamente a FND-002.
 
 ## Supuestos
 
@@ -67,7 +73,10 @@ Packages construibles con responsabilidades explícitas y una suite que falla an
 
 ### Componentes afectados
 
-- `packages/*` necesarios y suite de arquitectura.
+- `packages/domain`, `packages/client-context`, `packages/authorization`, `packages/contracts`,
+  `packages/observability`, `packages/testkit`, el boundary de `packages/policy-engine` y la suite de
+  arquitectura. `packages/design-system` sólo participa como límite existente sujeto a validación o
+  a extensión acotada de interfaces cuando corresponda.
 
 ### Cambios esperados
 
@@ -75,7 +84,8 @@ Packages construibles con responsabilidades explícitas y una suite que falla an
 
 ### Frontend
 
-- Sólo contracts/design-system autorizados; nunca domain interno, Nest DTO o Prisma.
+- Sólo contracts y las interfaces existentes de design-system están autorizados; nunca domain
+  interno, Nest DTO o Prisma. Esta autorización de consumo no transfiere ownership a FND-004.
 
 ### API/OpenAPI
 
@@ -115,11 +125,16 @@ Packages construibles con responsabilidades explícitas y una suite que falla an
 
 ## Archivos o módulos esperados
 
-- Packages domain, client-context, authorization, contracts, design-system, observability, testkit y límite vacío de policy-engine.
+- Packages domain, client-context, authorization, contracts, observability y testkit, además del
+  límite vacío de policy-engine.
+- Reglas de arquitectura para `packages/design-system` existente, sin recrearlo ni duplicar sus
+  design tokens.
 
 ## Criterios de aceptación
 
 - [ ] Cada package tiene responsabilidad y API pública explícitas.
+- [ ] FND-004 no crea ni recrea `packages/design-system`; sólo valida sus límites o extiende
+  interfaces existentes cuando su scope lo exige.
 - [ ] No existe `common` genérico.
 - [ ] Domain/Policy compilan sin framework ni infraestructura.
 - [ ] Frontend no puede importar Prisma/Nest internos.
@@ -163,11 +178,13 @@ npm run build
 ## Riesgos
 
 - Crear abstracciones sin consumidor.
+- Duplicar el ownership de `packages/design-system` asignado a FND-002.
 - Permitir dependencias transitivas de framework en domain.
 
 ## Rollback o reversibilidad
 
-- Packages aditivos; revertibles antes de consumidores funcionales.
+- Packages bajo ownership de FND-004 son aditivos y revertibles antes de consumidores funcionales;
+  `packages/design-system` no se recrea ni se toma en ownership.
 
 ## Condiciones de bloqueo
 

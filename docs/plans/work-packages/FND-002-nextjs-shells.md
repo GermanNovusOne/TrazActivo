@@ -37,12 +37,16 @@ Ambas apps levantan y construyen independientemente, se distinguen visual y téc
 ### Incluye
 
 - App shell, ruta de health/smoke visual, estados loading/error y tokens base.
+- Creación inicial de `packages/design-system` y de sus design tokens mínimos; FND-002 es su único
+  owner inicial.
 - Separación portal/control.
 - Tests de componente y accesibilidad del shell.
 
 ### No incluye
 
 - Pantalla de activos, Client Selector funcional, autenticación o branding configurable.
+- Crear otros packages compartidos o transferir a FND-004 el ownership inicial de
+  `packages/design-system`.
 - Fetch directo a DB o API ad hoc.
 - Reglas de autorización o contabilidad en frontend.
 
@@ -66,7 +70,8 @@ Ambas apps levantan y construyen independientemente, se distinguen visual y téc
 
 ### Componentes afectados
 
-- `apps/portal-web`, `apps/control-web` y design tokens mínimos.
+- `apps/portal-web`, `apps/control-web` y creación inicial de `packages/design-system` con design
+  tokens mínimos.
 
 ### Cambios esperados
 
@@ -114,7 +119,7 @@ Ambas apps levantan y construyen independientemente, se distinguen visual y téc
 
 ## Archivos o módulos esperados
 
-- `apps/portal-web`, `apps/control-web` y superficie mínima de `packages/design-system`.
+- `apps/portal-web`, `apps/control-web` y superficie inicial mínima de `packages/design-system`.
 
 ## Criterios de aceptación
 
