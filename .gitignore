@@ -19,6 +19,8 @@
 Thumbs.db
 
 # Generated output
+.next/
+*.tsbuildinfo
 bin/
 obj/
 build/

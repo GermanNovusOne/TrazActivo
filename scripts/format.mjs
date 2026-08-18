@@ -19,7 +19,7 @@ const supportedExtensions = new Set([
   ".yaml",
   ".yml",
 ]);
-const ignoredDirectories = new Set(["coverage", "dist", "node_modules", "out"]);
+const ignoredDirectories = new Set([".next", "build", "coverage", "dist", "node_modules", "out"]);
 const selectedRootFiles = [
   ".prettierrc.json",
   "README.md",

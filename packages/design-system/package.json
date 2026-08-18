@@ -1,0 +1,19 @@
+{
+  "name": "@trazactivo/design-system",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./styles.css": "./src/styles.css"
+  },
+  "scripts": {
+    "build": "tsc --project tsconfig.build.json",
+    "test:a11y": "vitest run --config vitest.a11y.config.ts",
+    "test:unit": "vitest run --config vitest.config.ts",
+    "typecheck": "tsc --project tsconfig.json --noEmit"
+  },
+  "peerDependencies": {
+    "react": "19.2.8"
+  }
+}
