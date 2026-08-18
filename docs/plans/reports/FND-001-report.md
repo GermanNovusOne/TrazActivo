@@ -155,7 +155,7 @@ Estos estados no constituyen PASS funcional, contable, multi-client, E2E, accesi
 
 `npm ci` reconstruyó `node_modules` desde el lockfile sin pasos ocultos y ejecutó el preflight
 automático. Antes del push se creó un clon local aislado de la branch; allí `npm ci` y
-`npm run verify` terminaron en exit 0, con 8 pruebas de arquitectura aprobadas. El clon temporal se
+`npm run verify` terminaron en exit 0, con 9 pruebas de arquitectura aprobadas. El clon temporal se
 eliminó después de conservar el resultado en este reporte.
 
 ## Riesgos y controles
