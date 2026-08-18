@@ -5,7 +5,6 @@ Un TBD no se cierra con una inferencia del agente. Requiere decisión, responsab
 | ID | Decisión pendiente | Impacto | Responsable | Bloquea |
 |---|---|---|---|---|
 | TBD-PROD-001 | Alcance final del MVP comercial | Backlog y costo | Product Owner | Fase funcional completa |
-| TBD-DEV-001 | Versión mayor de Node.js | Reproducibilidad | Eduardo/Arquitectura | Primer install y CI |
 | TBD-DEV-002 | App Service o Container Apps | Hosting, pipeline y costo | DevOps/Arquitectura | Azure DEV |
 | TBD-DEV-003 | Bicep o estándar IaC alternativo | Operación | DevOps | IaC productivo |
 | TBD-DATA-001 | Azure SQL final y estrategia de elastic pool | Costo y capacidad | Arquitectura/Data | Producción |
@@ -33,4 +32,18 @@ Responsable:
 Evidencia:
 ADR/Requisito actualizado:
 Impacto en backlog:
+```
+
+## Cierres
+
+### TBD-DEV-001 — Cerrado
+
+```text
+TBD: TBD-DEV-001
+Decisión: Node.js 24 LTS como versión mayor de runtime y desarrollo para TrazActivo v1.1.
+Fecha: 2026-08-18
+Responsable: Germán/Eduardo - Arquitectura
+Evidencia: Aprobación explícita de arquitectura para continuar con la foundation TypeScript.
+ADR/Requisito actualizado: DEC-DEV-001; concreta el requisito de ADR-015 de fijar la versión mayor de Node.js y resuelve TBD-DEV-001 del PDD, sin modificar el ADR Accepted ni el PDD.
+Impacto en backlog: Habilita FND-001 y el primer npm install/npm ci.
 ```
