@@ -68,6 +68,18 @@ Este paquete es la baseline para planificar y desarrollar TrazActivo con un agen
 
 ## Uso
 
+### Bootstrap local
+
+La foundation fija Node.js `24.13.0` y npm `11.6.2`. Con esas versiones activas:
+
+```text
+npm ci
+npm run verify
+```
+
+Los comandos, estados explícitos de suites futuras y criterios de actualización del toolchain se
+documentan en `docs/04-development/workspace-toolchain.md`.
+
 ### Planificación
 
 Entregar al agente el repositorio y el archivo:
