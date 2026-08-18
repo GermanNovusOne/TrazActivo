@@ -2,7 +2,10 @@
 
 ## Estado
 
-`DRAFT`
+`READY`
+
+Autorizada exclusivamente para implementación por decisión humana del 2026-08-18. Esta transición
+no autoriza ninguna otra Work Package.
 
 ## Objetivo
 
@@ -26,7 +29,7 @@ Ambas apps levantan y construyen independientemente, se distinguen visual y téc
 
 ## Gate de entrada
 
-- FND-001 completada.
+- FND-001 completada (`DONE`); dependencia de entrada satisfecha.
 
 ## Gate de salida
 
@@ -52,7 +55,7 @@ Ambas apps levantan y construyen independientemente, se distinguen visual y téc
 
 ## Dependencias
 
-- FND-001.
+- FND-001 (`DONE`; satisfecha).
 
 ## Precondiciones
 
@@ -178,5 +181,5 @@ npm run dev --workspace control-web
 
 ## Condiciones de bloqueo
 
-- FND-001 no completada.
+- FND-001 está completada y no constituye un bloqueo vigente.
 - Dependencias frontend no aprobadas.

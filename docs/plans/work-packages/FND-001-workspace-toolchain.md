@@ -182,8 +182,9 @@ documental no se ejecuta npm; se registra la evidencia humana aprobada de la eje
 - `npm run verify`: exit 0.
 - `npm run test:architecture`: 9/9.
 - `git diff --check`: exit 0.
-- No se implementó otra Work Package; FND-002, FND-003 y FND-004 permanecen `DRAFT` y no están
-  autorizadas.
+- Al cierre de FND-001 no se había implementado otra Work Package; FND-002, FND-003 y FND-004
+  permanecían `DRAFT` y no estaban autorizadas. La autorización posterior de FND-002 se registra en
+  su Work Package y en el plan, sin alterar la evidencia de cierre de FND-001.
 
 ## Riesgos
 
