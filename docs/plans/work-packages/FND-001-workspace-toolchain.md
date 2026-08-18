@@ -2,7 +2,9 @@
 
 ## Estado
 
-`DRAFT`
+`READY`
+
+Autorizada para implementación por Germán/Eduardo el 2026-08-18. `TBD-DEV-001` fue resuelto formalmente con Node.js 24 LTS como versión mayor aprobada.
 
 ## Objetivo
 
@@ -62,11 +64,11 @@ Desde un clon limpio, el workspace reconoce apps/packages, usa versiones fijadas
 
 ## Supuestos
 
-- No se presupone versión Node, npm, runner ni plataforma CI/CD.
+- Node.js 24 LTS es una decisión humana aprobada, no un supuesto; no se presupone versión de npm, runner ni plataforma CI/CD.
 
 ## Bloqueos/TBD
 
-- `TBD-DEV-001` bloquea completamente esta WP.
+- `TBD-DEV-001` está cerrado: Node.js 24 LTS es la versión mayor aprobada y ya no bloquea esta WP.
 - `DEC-CICD-001` permanece Propuesta; CI/CD remoto queda fuera de esta WP.
 
 ## Diseño
@@ -181,6 +183,6 @@ No se ejecutan hasta cerrar `TBD-DEV-001` y aprobar la WP. Durante esta ejecuci�
 
 ## Condiciones de bloqueo
 
-- `TBD-DEV-001` abierto.
+- `TBD-DEV-001` está cerrado y no constituye un bloqueo vigente.
 - Evidencia externa de BAS-001 ausente o inválida.
 - Dependencias propuestas sin justificación.

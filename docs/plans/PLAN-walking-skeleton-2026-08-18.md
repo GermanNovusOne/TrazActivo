@@ -4,7 +4,7 @@
 
 `DRAFT`
 
-La transición de este plan y de cualquiera de sus Work Packages a `READY` requiere revisión humana de Germán/Eduardo y el cierre de los bloqueos aplicables. Este documento no autoriza implementación.
+La transición de este plan y de cualquiera de sus Work Packages a `READY` requiere revisión humana de Germán/Eduardo y el cierre de los bloqueos aplicables. Por decisión humana del 2026-08-18, BAS-001 está `DONE` y sólo FND-001 está `READY`; este documento no autoriza la implementación de ninguna otra Work Package.
 
 ## 1. Decisión o resultado buscado
 
@@ -102,7 +102,7 @@ La rama observada al elaborar el plan fue `planning/walking-skeleton-v1.1`. BAS-
 | ID | Pregunta/decisión | Impacto y WP bloqueada | Responsable | Momento y evidencia de cierre |
 |---|---|---|---|---|
 | TBD-PROD-001 | Alcance final del MVP comercial | No bloquea BAS-001, Gate 0 ni foundation; bloquea la fase funcional completa | Product Owner | Antes de cerrar el alcance funcional completo; decisión y backlog comercial actualizados |
-| TBD-DEV-001 | Versión mayor de Node.js | Bloquea FND-001, primer `npm install`/`npm ci` y CI | Eduardo/Arquitectura | Antes del primer install; versión aprobada y documentada |
+| TBD-DEV-001 | Cerrado: Node.js 24 LTS es la versión mayor aprobada | Ya no bloquea FND-001; habilita el primer `npm install`/`npm ci` dentro de su implementación autorizada | Eduardo/Arquitectura | Decisión humana formal del 2026-08-18; reflejada en FND-001 |
 | DR-WS-IDENTITY-001 | Mecanismo de identidad controlada exclusivamente local/test para el skeleton | Bloquea integración local de CLI-003 y los recorridos UX/QA; no cierra TBD-SEC-001 ni Gate 4 | Germán/Eduardo con Seguridad/Arquitectura | Antes de CLI-003; aprobación del harness local, guardas de ambiente, threat review y evidencia de que no habilita bypass desplegable |
 | TBD-DATA-002 | Límite de conexiones Prisma por instancia/stamp | Bloquea la prueba de carga, conforme al registro; SPI-001 aporta evidencia, pero el skeleton local no lo cierra ni fija sizing productivo | Backend/Data | Antes de la prueba de carga; evidencia y cierre conforme al registro autoritativo |
 | DR-WS-DS-001 | Parámetros locales de cache, TTL, pool, cierre, invalidación y reemplazo del DataSource Manager | Bloquea CLI-004 después de SPI-001 | Germán/Eduardo con Arquitectura/Backend/Data | Después de SPI-001; informe, métricas y aprobación explícita de los parámetros locales, sin extrapolarlos a Azure o producción |
@@ -138,14 +138,14 @@ La rama observada al elaborar el plan fue `planning/walking-skeleton-v1.1`. BAS-
 
 | Clasificación | WP | Motivo |
 |---|---|---|
-| Precondición satisfecha | BAS-001 | Tag externo verificado en `ba0a3b5`; permanece `DRAFT` como artefacto de trazabilidad, no como implementación pendiente |
-| Bloqueo directo | FND-001 | `TBD-DEV-001`; no puede ocurrir el primer install ni fijarse el toolchain |
+| Finalizada | BAS-001 | `DONE`; tag externo `foundation-pre-v1.1-typescript-2026-08-18` y commit preservado `ba0a3b5` como evidencia |
+| Autorizada | FND-001 | `READY`; `TBD-DEV-001` cerrado con Node.js 24 LTS y autorización humana de Germán/Eduardo |
 | Bloqueo directo futuro | CLI-003 | `DR-WS-IDENTITY-001`; sólo identidad controlada local/test, sin decidir identidad definitiva, MFA ni Gate 4 |
 | Bloqueo directo futuro | CLI-004 | `DR-WS-DS-001`, que sólo puede resolverse con evidencia de SPI-001 |
 | No bloquea el skeleton local | TBD-PROD-001 | Afecta el alcance final del MVP comercial, no Gate 0 ni foundation |
 | No bloquea CLI-004 | TBD-DATA-002 | Conserva su bloqueo autoritativo sobre la prueba de carga; no se declara cerrado |
 
-En el snapshot actual, todas las WPs de implementación esperan transitivamente FND-001. Superado ese bloqueo, la ejecución vuelve a detenerse en CLI-003 y CLI-004 si sus DR respectivos siguen abiertos. Ninguna WP puede pasar a `READY` sólo por despejar dependencias: todas requieren revisión humana de Germán/Eduardo.
+En el snapshot actual, FND-001 es la única WP autorizada para implementación. Todas las WPs posteriores permanecen `DRAFT` y esperan transitivamente su finalización; la ejecución vuelve a detenerse en CLI-003 y CLI-004 si sus DR respectivos siguen abiertos. Ninguna otra WP puede pasar a `READY` sólo por despejar dependencias: todas requieren revisión humana de Germán/Eduardo.
 
 ## 7. Arquitectura afectada
 
@@ -161,7 +161,7 @@ En el snapshot actual, todas las WPs de implementación esperan transitivamente 
 
 ## 8. Estrategia
 
-1. Registrar BAS-001/Gate 0 como precondición satisfecha externamente y resolver TBD-DEV-001 antes de tocar toolchain.
+1. Conservar BAS-001/Gate 0 como `DONE` con evidencia externa y aplicar en FND-001 la decisión aprobada de Node.js 24 LTS.
 2. Crear una foundation mínima con shells y límites automatizados, sin lógica funcional anticipada.
 3. Levantar tres DB reales, separar schemas Platform/Client y ejecutar DB-003 Platform → A → B.
 4. Establecer OpenAPI y el cliente generado antes de construir la UI funcional.
@@ -317,7 +317,7 @@ Cada WP entrega un reporte con alcance, diff, comandos, resultados, riesgos, pen
 
 | Riesgo | Control del plan | Residual |
 |---|---|---|
-| Versión Node sin aprobar | TBD-DEV-001 bloquea FND-001 | Abierto |
+| Versión Node mayor | TBD-DEV-001 cerrado con Node.js 24 LTS; FND-001 autorizada | Cerrado para FND-001 |
 | Catálogo incompleto o con secretos | PDD, DEC-CLI-002/003, schema separado y revisión | Abierto hasta CLI-001/CLI-005 |
 | Bypass de identidad DEV llega a producción | DR-WS-IDENTITY-001, architecture/security tests | Abierto hasta decisión |
 | Prisma agota conexiones | SPI-001, TBD-DATA-002 y decisión local DR-WS-DS-001 | Riesgo productivo abierto hasta prueba de carga; implementación local bloqueada hasta CLI-004/005 |
@@ -334,7 +334,7 @@ Cada WP entrega un reporte con alcance, diff, comandos, resultados, riesgos, pen
 
 ```text
 Gate 0 / BAS-001 [precondición satisfecha externamente]
-→ FND-001 [TBD-DEV-001]
+→ FND-001 [READY; Node.js 24 LTS aprobado]
 → FND-003 + FND-005
 → DB-001 + DB-002
 → DB-003
@@ -366,7 +366,7 @@ Gate 0 / BAS-001 [precondición satisfecha externamente]
 
 ## 16. Condición de cierre
 
-El plan se considera completado, no implementado, cuando todos sus WP existen en `DRAFT`, tienen trazabilidad, dependencias, pruebas y bloqueos explícitos. El Walking Skeleton sólo se considera implementado y aprobado localmente cuando:
+El plan se considera completado, no implementado, cuando todos sus WP existen y tienen trazabilidad, dependencias, pruebas y bloqueos explícitos. En el estado aprobado del 2026-08-18, BAS-001 está `DONE`, FND-001 está `READY` y todas las demás WPs permanecen `DRAFT`. El Walking Skeleton sólo se considera implementado y aprobado localmente cuando:
 
 - Gate 0, Gate 1, Gate 2 y Gate 3 tienen evidencia humana de salida;
 - todos los WP aplicables fueron revisados `DRAFT → READY` antes de ejecutarse y posteriormente cumplieron su DoD;

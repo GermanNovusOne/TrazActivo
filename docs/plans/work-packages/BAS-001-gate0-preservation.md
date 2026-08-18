@@ -2,13 +2,15 @@
 
 ## Estado
 
-`DRAFT`
+`DONE`
 
 ## Disposición
 
 `PRECONDICIÓN_SATISFECHA_EXTERNAMENTE`
 
 Esta WP se conserva por trazabilidad con el backlog. No pertenece a la cola de implementación: el tag/respaldo de la foundation anterior fue ejecutado externamente antes de esta planificación.
+
+Cierre aprobado por decisión humana el 2026-08-18. Evidencia preservada: tag `foundation-pre-v1.1-typescript-2026-08-18` y commit `ba0a3b5`.
 
 ## Objetivo
 
@@ -132,11 +134,11 @@ Evidencia de Gate 0 referenciada como precondición satisfecha: el tag `foundati
 
 ## Criterios de aceptación
 
-- [ ] La evidencia externa identifica un tag/respaldo recuperable de la foundation anterior.
-- [ ] No se planifica nueva funcionalidad .NET.
-- [ ] PDD v1.1 y ADR Accepted están inventariados con precedencia correcta.
-- [ ] Las contradicciones, si existen, están bloqueadas y no resueltas por supuesto.
-- [ ] Germán/Eduardo reconocieron BAS-001 como precondición satisfecha y no como WP ejecutable.
+- [x] La evidencia externa identifica un tag/respaldo recuperable de la foundation anterior.
+- [x] No se planifica nueva funcionalidad .NET.
+- [x] PDD v1.1 y ADR Accepted están inventariados con precedencia correcta.
+- [x] Las contradicciones, si existen, están bloqueadas y no resueltas por supuesto.
+- [x] Germán/Eduardo reconocieron BAS-001 como precondición satisfecha y no como WP ejecutable.
 
 ## Casos negativos
 
@@ -160,13 +162,13 @@ Los comandos son de sólo lectura. No existe implementación futura ni se ejecut
 
 ## Definition of Done
 
-- [ ] Requisitos y fuentes trazados.
-- [ ] Evidencia de preservación revisada.
-- [ ] Scope y exclusiones respetados.
-- [ ] Bloqueos registrados.
-- [ ] Sin código ni dependencias.
-- [ ] Sin secretos.
-- [ ] Sin TBD P0 aplicable cerrado por inferencia.
+- [x] Requisitos y fuentes trazados.
+- [x] Evidencia de preservación revisada.
+- [x] Scope y exclusiones respetados.
+- [x] Bloqueos registrados.
+- [x] Sin código ni dependencias.
+- [x] Sin secretos.
+- [x] Sin TBD P0 aplicable cerrado por inferencia.
 
 ## Evidencia esperada
 
