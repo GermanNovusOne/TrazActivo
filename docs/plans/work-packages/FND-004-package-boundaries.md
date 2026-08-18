@@ -1,0 +1,175 @@
+# FND-004 — Packages y pruebas de arquitectura
+
+## Estado
+
+`DRAFT`
+
+## Objetivo
+
+Crear sólo los packages compartidos necesarios y automatizar límites que mantengan dominio, contexto, contratos y aplicaciones desacoplados.
+
+## Resultado observable
+
+Packages construibles con responsabilidades explícitas y una suite que falla ante dependencias prohibidas, incluido Prisma antes del boundary Client.
+
+## Requisitos relacionados
+
+- EPIC-FND-03/04.
+- PDD 05.3, 12 y 44.
+- Gate 1.
+
+## ADR relacionados
+
+- ADR-015.
+- ADR-017.
+- ADR-019.
+- ADR-021.
+
+## Gate de entrada
+
+- FND-001 completada.
+
+## Gate de salida
+
+- Límites de packages disponibles para implementar API, ClientContext y AssetItem.
+
+## Scope
+
+### Incluye
+
+- `domain`, `client-context`, `authorization`, `contracts`, `design-system`, `observability` y `testkit` mínimos.
+- Boundary de `policy-engine` sin reglas publicadas ni cálculos.
+- Tests de imports, framework independence y stack prohibido.
+
+### No incluye
+
+- Package genérico `common`.
+- Modelos Prisma o DTO NestJS expuestos al frontend.
+- Reglas contables, AssetItem funcional o adaptadores Azure.
+
+## Dependencias
+
+- FND-001.
+
+## Precondiciones
+
+- Responsabilidad y consumidores de cada package documentados.
+
+## Supuestos
+
+- No se crea un package sin consumidor inmediato ni se presume una regla contable.
+
+## Bloqueos/TBD
+
+- TBD contables no bloquean crear el límite vacío de Policy Engine; sí bloquean cualquier regla/cálculo.
+
+## Diseño
+
+### Componentes afectados
+
+- `packages/*` necesarios y suite de arquitectura.
+
+### Cambios esperados
+
+- APIs públicas mínimas, mapas de dependencias y reglas automatizadas.
+
+### Frontend
+
+- Sólo contracts/design-system autorizados; nunca domain interno, Nest DTO o Prisma.
+
+### API/OpenAPI
+
+- Contracts prepara artefactos generados, no duplica DTO manuales.
+
+### Application/Domain/Policy
+
+- Domain y Policy Engine son TypeScript puro sin NestJS, Prisma, Next.js, Azure ni HTTP.
+
+### ClientContext y aislamiento
+
+- El tipo inmutable no contiene secretos ni connection strings.
+
+### Prisma y migraciones
+
+- Prisma sólo será permitido en infrastructure adapters y DataSource Manager futuro.
+
+### Permisos
+
+- Authorization define contratos, no decisiones de UI.
+
+### Eventos y auditoría
+
+- Sólo puertos/tipos mínimos cuando tengan consumidor inmediato.
+
+### Observabilidad
+
+- CorrelationId como tipo/puerto sin SDK Azure.
+
+## Contratos API
+
+- Ningún contrato HTTP funcional aún.
+
+## Persistencia
+
+- Ninguna.
+
+## Archivos o módulos esperados
+
+- Packages domain, client-context, authorization, contracts, design-system, observability, testkit y límite vacío de policy-engine.
+
+## Criterios de aceptación
+
+- [ ] Cada package tiene responsabilidad y API pública explícitas.
+- [ ] No existe `common` genérico.
+- [ ] Domain/Policy compilan sin framework ni infraestructura.
+- [ ] Frontend no puede importar Prisma/Nest internos.
+- [ ] Architecture test falla si Prisma se obtiene sin ClientContext autorizado.
+
+## Casos negativos
+
+- [ ] Fixtures de imports prohibidos son rechazados por la suite.
+- [ ] Agregar `.csproj` o dependencia .NET falla el control.
+- [ ] Un cálculo contable sin golden aprobado falla el guard de alcance.
+
+## Pruebas obligatorias
+
+```text
+npm run format:check
+npm run lint
+npm run typecheck
+npm run test:unit
+npm run test:architecture
+npm run test:golden
+npm run build
+```
+
+## Comandos locales
+
+`test:golden` debe reportar `NOT_APPLICABLE_SCOPE` mediante un control real y fallar si detecta cálculo/política publicada; no puede marcar PASS contable.
+
+## Definition of Done
+
+- [ ] Build/lint/typecheck.
+- [ ] Unit/architecture reales.
+- [ ] Golden applicability real, no placeholder.
+- [ ] Mapa de dependencias documentado.
+- [ ] Sin secretos ni reglas anticipadas.
+- [ ] Sin TBD P0 aplicable.
+
+## Evidencia esperada
+
+- Grafo de imports, resultados de fixtures negativas y estado golden `NOT_APPLICABLE_SCOPE`.
+
+## Riesgos
+
+- Crear abstracciones sin consumidor.
+- Permitir dependencias transitivas de framework en domain.
+
+## Rollback o reversibilidad
+
+- Packages aditivos; revertibles antes de consumidores funcionales.
+
+## Condiciones de bloqueo
+
+- Responsabilidad de un package no definida.
+- Propuesta de regla contable o acceso Prisma fuera de límites.
