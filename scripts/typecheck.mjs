@@ -1,0 +1,21 @@
+import { resolve } from "node:path";
+
+import { repositoryRoot, run, runWorkspaceScript } from "./toolchain.mjs";
+
+const rootStatus = run(process.execPath, [
+  resolve(repositoryRoot, "node_modules/typescript/bin/tsc"),
+  "--project",
+  resolve(repositoryRoot, "tsconfig.json"),
+  "--noEmit",
+]);
+
+if (rootStatus !== 0) {
+  process.exitCode = rootStatus;
+} else {
+  console.log("TYPECHECK_ROOT_OK config=tsconfig.json");
+  process.exitCode = await runWorkspaceScript("typecheck", {
+    owner: "FND-002,FND-003,FND-004",
+    reason: "no TypeScript workspace has been delivered yet",
+    status: "NOT_IMPLEMENTED_SCOPE",
+  });
+}

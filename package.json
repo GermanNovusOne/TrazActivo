@@ -1,0 +1,50 @@
+{
+  "name": "trazactivo",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "TrazActivo v1.1 TypeScript monorepo",
+  "engines": {
+    "node": "24.13.0",
+    "npm": "11.6.2"
+  },
+  "packageManager": "npm@11.6.2",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "preinstall": "node scripts/preflight.mjs",
+    "preflight": "node scripts/preflight.mjs",
+    "format": "node scripts/format.mjs --write",
+    "format:check": "node scripts/format.mjs --check",
+    "lint": "eslint . --max-warnings=0",
+    "typecheck": "node scripts/typecheck.mjs",
+    "test:unit": "node scripts/run-suite.mjs test:unit",
+    "test:architecture": "vitest run --config vitest.architecture.config.mjs",
+    "test:integration": "node scripts/run-suite.mjs test:integration",
+    "test:contract": "node scripts/run-suite.mjs test:contract",
+    "test:multiclient": "node scripts/run-suite.mjs test:multiclient",
+    "test:golden": "node scripts/run-suite.mjs test:golden",
+    "test:e2e": "node scripts/run-suite.mjs test:e2e",
+    "test:a11y": "node scripts/run-suite.mjs test:a11y",
+    "build": "node scripts/run-suite.mjs build",
+    "dev": "node scripts/not-implemented.mjs dev FND-002,FND-003",
+    "local:up": "node scripts/not-implemented.mjs local:up FND-005",
+    "local:down": "node scripts/not-implemented.mjs local:down FND-005",
+    "db:generate": "node scripts/not-implemented.mjs db:generate DB-001,DB-002",
+    "db:migrate:local": "node scripts/not-implemented.mjs db:migrate:local DB-003",
+    "db:seed:local": "node scripts/not-implemented.mjs db:seed:local DB-003",
+    "verify": "node scripts/verify.mjs",
+    "verify:failure-probe": "node scripts/verify-failure-probe.mjs"
+  },
+  "devDependencies": {
+    "@eslint/js": "10.0.1",
+    "eslint": "10.8.1",
+    "globals": "17.11.0",
+    "prettier": "3.9.6",
+    "typescript": "5.9.3",
+    "typescript-eslint": "8.67.0",
+    "vitest": "4.1.10"
+  }
+}
