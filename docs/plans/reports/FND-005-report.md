@@ -10,7 +10,8 @@ SQL locales segregadas, sin Prisma, migraciones, schemas o datos de negocio.
 - Work Package: `FND-005-local-three-databases`.
 - Estado de entrada: `READY`.
 - Estado durante implementación: `IN_PROGRESS`.
-- Estado final de esta ejecución: `READY`; `BLK-FND-005-001` está `RESOLVED` y no se marca `DONE`.
+- Estado final: `DONE` por decisión humana de cierre; `BLK-FND-005-001` permanece históricamente
+  `RESOLVED`.
 - Branch: `codex/FND-005-local-three-databases`.
 - Base: `architecture/v1.1-typescript`.
 - Dependencia satisfecha: FND-001 (`DONE`).
@@ -266,6 +267,35 @@ memoria del proceso del clon y descartados al finalizar; no se imprimieron ni pe
 demuestra que la prueba no dependió del contenido del volumen anterior ni de outputs de otra
 ejecución.
 
+## Cierre post-merge
+
+- PR de implementación: #14 — FND-005: add reproducible local SQL Server databases.
+- Merge en `architecture/v1.1-typescript`:
+  `4084e3a436ef62636eb4ec523f95dd6c39967696`.
+- Head implementado y commit de evidencia documental:
+  `21a90e430a73d1ed9855720ea3da415ca54f1ebb`.
+- Commit candidato validado en clean checkout:
+  `ea0e14cee984d7cf2bc672d21a0233449c91803b`.
+
+La validación humana post-merge aprobada registró:
+
+- `npm ci`: exit 0; 369 packages instalados, 383 auditados y 0 vulnerabilidades;
+- `local:preflight`: exit 0 con `desktop-linux`, Engine 29.6.1 y puerto 14333;
+- `local:reset` y `local:status`: exit 0, con las tres referencias resolviendo sus databases y users
+  exactos;
+- integración `local-infrastructure`: PASS real con tres `DATABASE_VERIFIED`, aislamiento cruzado e
+  independencia de disponibilidad A/B;
+- architecture 50/50, unit 26/26, a11y 5/5, build y backend-smoke: PASS;
+- contract, multiclient, future application integration y e2e conservaron `NOT_IMPLEMENTED_SCOPE`;
+  golden conservó `NOT_APPLICABLE_SCOPE` bajo QA-002;
+- `npm run verify`: exit 0 con
+  `VERIFY_COMPLETE result=CONTROLS_EXECUTED_WITH_EXPLICIT_SCOPE_STATUSES`;
+- `local:down` y `git diff --check`: exit 0; working tree post-merge limpio y secretos no
+  persistidos.
+
+El timeout histórico de control-api no reapareció. Esta evidencia cierra FND-005, pero no autoriza
+DB-001, DB-002, DB-003 ni ninguna otra Work Package.
+
 ## Riesgos y limitaciones
 
 - La instancia compartida prueba aislamiento a nivel database y login, no aislamiento físico ni alta
@@ -277,11 +307,12 @@ ejecución.
 - Docker Engine debe ser iniciado manualmente por el operador; los scripts no alteran Docker Desktop o
   WSL2. La indisponibilidad inicial quedó resuelta por el operador y se conserva como historia.
 
-## Pendientes
+## Estado de cierre
 
-`BLK-FND-005-001` está `RESOLVED`. FND-005 permanece `READY`, no `DONE`, a la espera de revisión
-humana. El runtime principal y el clean checkout del commit candidato están completamente verdes;
-ninguna Work Package adicional queda autorizada por esta evidencia.
+`BLK-FND-005-001` está `RESOLVED` y conserva la historia del Engine indisponible, el posterior
+`Msg 911`, la separación del bootstrap, las regresiones y las validaciones runtime, clean checkout y
+post-merge. FND-005 queda `DONE` por decisión humana; ninguna Work Package adicional queda autorizada
+por este cierre.
 
 No existe Decision Request: la imagen y el comportamiento usados no evidenciaron incompatibilidad
 semántica relevante entre SQL Server local y Azure SQL para el alcance de FND-005.
