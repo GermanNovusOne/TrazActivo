@@ -3,11 +3,11 @@ import { resolve } from "node:path";
 
 import { describe, expect, test } from "vitest";
 
-import { createRepositoryFixture } from "../src/index.js";
+import { createRepositoryFixture, type RepositoryFixture } from "@trazactivo/testkit";
 
 describe("repository fixture", () => {
   test("creates isolated files and removes its exact temporary root", async () => {
-    const fixture = await createRepositoryFixture({
+    const fixture: RepositoryFixture = await createRepositoryFixture({
       "packages/example/src/index.ts": "export {};",
     });
     const file = resolve(fixture.root, "packages/example/src/index.ts");

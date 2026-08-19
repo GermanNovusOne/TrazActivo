@@ -34,8 +34,9 @@ Las APIs vacías son una decisión explícita: los consumidores futuros están i
 WPs no están autorizadas. Agregar ahora tipos o contratos funcionales inventaría comportamiento.
 
 `packages/design-system` no forma parte de los packages creados: fue entregado por FND-002. FND-004
-comprueba que no aparece en su diff y conserva sus exports existentes sin extensión ni cambio de
-ownership.
+valida de forma estructural que continúa siendo un workspace público separado, sin comparar hashes
+ni depender de una branch Git local. El changed-files del PR #11 conserva la evidencia humana de
+que FND-004 no modificó el package.
 
 ## Archivos creados o modificados
 
@@ -69,7 +70,7 @@ raíz (`4.1.10`). Todos los manifests conservan versiones exactas y son compatib
 ## Mapa de imports
 
 ```text
-scripts/fnd-004.architecture.test.mjs -> packages/testkit/src/index.ts
+scripts/fnd-004.architecture.test.mjs -> @trazactivo/testkit (export público `.`)
 packages/testkit/src/index.ts         -> node:fs/promises, node:os, node:path
 packages/domain                       -> sin imports
 packages/client-context               -> sin imports
@@ -83,11 +84,17 @@ portal-web/control-web                -> @trazactivo/design-system (límite pree
 No existen ciclos entre packages ni `packages/common`. Ningún package de FND-004 se importa desde
 runtime productivo.
 
+La suite architecture importa `createRepositoryFixture` desde `@trazactivo/testkit`, no desde una
+ruta interna. Los unit tests importan además el tipo `RepositoryFixture` por el mismo export `.`;
+typecheck y ejecución Vitest demuestran la resolución de npm workspaces y package exports.
+
 ## Controles de arquitectura
 
 La validación combina las reglas previas con las reglas de FND-004 y falla ante:
 
-- NestJS, Prisma, Next.js, React, Azure SDK o HTTP dentro de domain o policy-engine;
+- cualquier dependencia productiva en domain o policy-engine, independientemente de su nombre;
+- cualquier import no relativo en domain o policy-engine, incluidos Node.js, DB drivers,
+  frameworks y SDKs;
 - Prisma en frontend o imports frontend hacia internos backend;
 - imports o dependencias app→app;
 - ciclos entre packages o creación de un package no aprobado, incluido `common`;
@@ -96,8 +103,13 @@ La validación combina las reglas previas con las reglas de FND-004 y falla ante
 - Prisma fuera de infrastructure/persistence o sin un import explícito del boundary ClientContext;
 - superficie funcional `AssetItem`, invariantes o value objects anticipados en domain;
 - source/export adicional en cualquiera de los seis boundaries que deben seguir vacíos;
-- modificación o recreación de `packages/design-system` dentro del diff de FND-004;
+- ausencia o pérdida del boundary público estructural de `packages/design-system`;
 - archivos o dependencias del stack .NET ya prohibido por el gate raíz.
+
+Domain y policy-engine mantienen vacías `dependencies`, `optionalDependencies` y
+`peerDependencies`. Sus fuentes sólo pueden usar imports relativos internos; cualquier bare import
+o import `node:*` se rechaza por omisión. Tooling compartido de typecheck/build continúa permitido
+únicamente desde la raíz y no se convierte en dependencia productiva de estos packages.
 
 ## Golden applicability
 
@@ -120,11 +132,13 @@ Pruebas positivas:
 - los seis boundaries futuros contienen exactamente `export {};`;
 - el fixture de `testkit` crea, lee y elimina un repositorio temporal aislado;
 - repositorio vigente sin violaciones y golden aplicable como `NOT_APPLICABLE_SCOPE`;
-- `design-system` ausente del diff de FND-004.
+- boundary público de `design-system` válido sin consultar branches Git; changed-files del PR #11
+  sin modificaciones del package.
 
 Fixtures negativas:
 
-- imports de NestJS, Prisma, Next.js, React, Azure y HTTP en packages puros;
+- `node:fs`, `pg`, NestJS, Prisma, Next.js, React, Azure y HTTP rechazados en domain;
+- `node:crypto` y React rechazados en policy-engine; imports relativos internos permitidos;
 - Prisma y NestJS desde frontend, además de app→app;
 - ciclo entre packages y package `common`;
 - `testkit` en dependencia/import runtime y `testkit` importando producto;
@@ -154,12 +168,28 @@ Dentro de `verify`, a11y conservó 5/5 pruebas aprobadas y el backend smoke de F
 comprobar health HTTP 200 y shutdown liberado. Integration, contract, multiclient y E2E conservaron
 `NOT_IMPLEMENTED_SCOPE`; golden fue el único `NOT_APPLICABLE_SCOPE` y no se presentó como PASS.
 
+## Evidencia de checkout limpio
+
+La branch se validó además desde un clon temporal `--single-branch` que no contenía una branch local
+ni remote-tracking ref llamada `architecture/v1.1-typescript`:
+
+- `npm ci`: exit 0;
+- `npm run test:architecture`: exit 0, 35/35;
+- resolución de `@trazactivo/testkit` por su export público: validada durante carga de architecture,
+  unit y typecheck;
+- `npm run verify`: exit 0, `CONTROLS_EXECUTED_WITH_EXPLICIT_SCOPE_STATUSES`;
+- `git status --short`: vacío después de la validación.
+
+`npm run verify` no ejecutó fetch ni necesitó una referencia histórica a la branch base. El control
+estructural de design-system sigue funcionando después del merge porque inspecciona el workspace
+vigente y permite exports adicionales legítimos.
+
 ## Criterios de aceptación
 
 | Criterio                                                     | Evidencia                                                             |
 | ------------------------------------------------------------ | --------------------------------------------------------------------- |
 | Cada package tiene responsabilidad y API pública explícitas. | Matriz aprobada, manifests, índices y este reporte.                   |
-| FND-004 no crea, recrea ni extiende design-system.           | Diff vacío del package y regresión automatizada.                      |
+| FND-004 no crea, recrea ni extiende design-system.           | Control estructural portable y changed-files del PR #11.              |
 | No existe `common` genérico.                                 | Regla vigente y fixture negativa.                                     |
 | Domain y Policy compilan sin framework ni infraestructura.   | Typecheck/build por workspace y reglas de dependency/import.          |
 | Frontend no puede importar Prisma o NestJS interno.          | Gate preexistente conservado y fixture negativa de FND-004.           |
@@ -176,13 +206,13 @@ cambia FND-004 de `READY` a `DONE`.
 
 ## Riesgos y controles
 
-| Riesgo                                            | Control                                                      | Residual                                             |
-| ------------------------------------------------- | ------------------------------------------------------------ | ---------------------------------------------------- |
-| Inventar abstracciones para consumidores futuros. | Seis APIs deliberadamente vacías.                            | Cada WP consumidora deberá justificar su extensión.  |
-| Acoplar dominio/policy a infraestructura.         | Imports y dependencias prohibidos, más fixtures negativas.   | Mantener el gate ante nuevos entrypoints.            |
-| Usar testkit en producto.                         | Prohibición en manifests e imports productivos.              | QA futura puede extenderlo sólo con consumo real.    |
-| Publicar cálculo sin golden.                      | Scanner de policy-engine dentro de `test:golden` y `verify`. | QA-002 debe entregar el golden final cuando aplique. |
-| Duplicar design-system.                           | Ownership documentado y diff automatizado.                   | FND-002 sigue siendo el único owner inicial.         |
+| Riesgo                                            | Control                                                       | Residual                                             |
+| ------------------------------------------------- | ------------------------------------------------------------- | ---------------------------------------------------- |
+| Inventar abstracciones para consumidores futuros. | Seis APIs deliberadamente vacías.                             | Cada WP consumidora deberá justificar su extensión.  |
+| Acoplar dominio/policy a infraestructura.         | Dependencias productivas vacías e imports externos denegados. | Autorizar explícitamente cada futura dependencia.    |
+| Usar testkit en producto.                         | Prohibición en manifests e imports productivos.               | QA futura puede extenderlo sólo con consumo real.    |
+| Publicar cálculo sin golden.                      | Scanner de policy-engine dentro de `test:golden` y `verify`.  | QA-002 debe entregar el golden final cuando aplique. |
+| Duplicar design-system.                           | Boundary estructural y changed-files revisado en el PR.       | FND-002 sigue siendo el único owner inicial.         |
 
 ## Limitaciones y pendientes
 

@@ -1,8 +1,8 @@
-import { execFileSync, spawnSync } from "node:child_process";
+import { spawnSync } from "node:child_process";
 import { readFile } from "node:fs/promises";
 import { resolve } from "node:path";
 
-import { createRepositoryFixture } from "../packages/testkit/src/index.ts";
+import { createRepositoryFixture } from "@trazactivo/testkit";
 import { afterEach, describe, expect, test } from "vitest";
 
 import { validateRepository } from "./architecture-rules.mjs";
@@ -91,22 +91,32 @@ describe("FND-004 package boundaries", () => {
     }
   });
 
-  test("domain and policy-engine reject framework, persistence, UI, Azure and HTTP imports", async () => {
+  test("domain and policy-engine deny production dependencies and external imports by default", async () => {
     const root = await fixture({
-      "packages/domain/package.json": packageManifest("@trazactivo/domain"),
+      "packages/domain/package.json": packageManifest("@trazactivo/domain", {
+        dependencies: { pg: "8.16.3" },
+      }),
+      "packages/domain/src/internal.ts": "export {};",
       "packages/domain/src/index.ts": [
+        'import "node:fs";',
+        'import "pg";',
         'import "@nestjs/common";',
         'import "@prisma/client";',
         'import "next";',
         'import "@azure/monitor-opentelemetry";',
         'import "node:http";',
+        'import "./internal.js";',
       ].join("\n"),
       "packages/policy-engine/package.json": packageManifest("@trazactivo/policy-engine"),
-      "packages/policy-engine/src/index.ts": 'import "react";',
+      "packages/policy-engine/src/index.ts": ['import "node:crypto";', 'import "react";'].join(
+        "\n",
+      ),
     });
     const violations = await validateFnd004Boundaries(root);
 
     for (const dependency of [
+      "node:fs",
+      "pg",
       "@nestjs/common",
       "@prisma/client",
       "next",
@@ -114,11 +124,20 @@ describe("FND-004 package boundaries", () => {
       "node:http",
     ]) {
       expect(violations).toContain(
-        `FND004_PURE_PACKAGE_IMPORT packages/domain/src/index.ts -> ${dependency}`,
+        `FND004_PURE_PACKAGE_EXTERNAL_IMPORT packages/domain/src/index.ts -> ${dependency}`,
       );
     }
     expect(violations).toContain(
-      "FND004_PURE_PACKAGE_IMPORT packages/policy-engine/src/index.ts -> react",
+      "FND004_PURE_PACKAGE_PRODUCTION_DEPENDENCY packages/domain/package.json dependencies.pg",
+    );
+    expect(violations).toContain(
+      "FND004_PURE_PACKAGE_EXTERNAL_IMPORT packages/policy-engine/src/index.ts -> node:crypto",
+    );
+    expect(violations).toContain(
+      "FND004_PURE_PACKAGE_EXTERNAL_IMPORT packages/policy-engine/src/index.ts -> react",
+    );
+    expect(violations).not.toContain(
+      "FND004_PURE_PACKAGE_EXTERNAL_IMPORT packages/domain/src/index.ts -> ./internal.js",
     );
   });
 
@@ -280,13 +299,18 @@ describe("FND-004 package boundaries", () => {
     expect(output).not.toMatch(/\bPASS\b/u);
   });
 
-  test("design-system remains byte-for-byte outside the FND-004 diff", () => {
-    const changed = execFileSync(
-      "git",
-      ["diff", "--name-only", "architecture/v1.1-typescript", "--", "packages/design-system"],
-      { cwd: repositoryRoot, encoding: "utf8" },
-    ).trim();
+  test("design-system remains a separate public workspace owned outside FND-004", async () => {
+    const manifest = JSON.parse(
+      await readFile(resolve(repositoryRoot, "packages/design-system/package.json"), "utf8"),
+    );
+    const packageDocumentation = await readFile(
+      resolve(repositoryRoot, "packages/README.md"),
+      "utf8",
+    );
 
-    expect(changed).toBe("");
+    expect(manifest.name).toBe("@trazactivo/design-system");
+    expect(manifest.private).toBe(true);
+    expect(manifest.exports).toHaveProperty(".");
+    expect(packageDocumentation).toMatch(/`design-system`[^\n]*FND-002/u);
   });
 });

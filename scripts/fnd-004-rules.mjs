@@ -29,8 +29,7 @@ const dependencySections = [
 ];
 const productionDependencySections = ["dependencies", "optionalDependencies", "peerDependencies"];
 const sourceExtensions = new Set([".cts", ".mts", ".ts", ".tsx"]);
-const purePackageDependency =
-  /^(?:@azure(?:\/|$)|@nestjs(?:\/|$)|@prisma(?:\/|$)|axios$|next(?:\/|$)|node:https?$|prisma$|react(?:\/|$)|undici$)/u;
+const purePackageDirectories = new Set(["domain", "policy-engine"]);
 const clientContextSensitiveSurface =
   /\b(?:connection_?string|credentials?|database_?reference|database_?url|dbref|password|secrets?|tokens?)\b/iu;
 const domainFunctionalSurface = /\b(?:AssetItem|Invariant|ValueObject)\b/u;
@@ -172,6 +171,19 @@ export async function validateFnd004Boundaries(root) {
   const violations = [];
   const records = await packageRecords(root, violations);
   const recordsByDirectory = new Map(records.map((record) => [record.directory, record]));
+  const designSystem = recordsByDirectory.get("design-system");
+
+  if (!designSystem) {
+    violations.push("FND004_DESIGN_SYSTEM_BOUNDARY_MISSING packages/design-system");
+  } else if (
+    designSystem.manifest.name !== "@trazactivo/design-system" ||
+    designSystem.manifest.private !== true ||
+    typeof designSystem.manifest.exports !== "object" ||
+    designSystem.manifest.exports === null ||
+    !Object.hasOwn(designSystem.manifest.exports, ".")
+  ) {
+    violations.push("FND004_DESIGN_SYSTEM_BOUNDARY_INVALID packages/design-system/package.json");
+  }
 
   for (const [directory, packageName] of boundaryPackages) {
     const record = recordsByDirectory.get(directory);
@@ -217,9 +229,13 @@ export async function validateFnd004Boundaries(root) {
       }
     }
 
-    for (const { name } of dependencyEntries(record.manifest)) {
-      if (new Set(["domain", "policy-engine"]).has(directory) && purePackageDependency.test(name)) {
-        violations.push(`FND004_PURE_PACKAGE_DEPENDENCY ${manifestPath} ${name}`);
+    if (purePackageDirectories.has(directory)) {
+      for (const section of productionDependencySections) {
+        for (const name of Object.keys(record.manifest[section] ?? {})) {
+          violations.push(
+            `FND004_PURE_PACKAGE_PRODUCTION_DEPENDENCY ${manifestPath} ${section}.${name}`,
+          );
+        }
       }
     }
   }
@@ -245,6 +261,9 @@ export async function validateFnd004Boundaries(root) {
       const displayPath = toPosix(relative(root, file));
       const source = await readFile(file, "utf8");
       const imports = extractImportSpecifiers(source);
+      const purePackageSource = [...purePackageDirectories].some((directory) =>
+        displayPath.startsWith(`packages/${directory}/src/`),
+      );
 
       if (
         displayPath.startsWith("packages/client-context/src/") &&
@@ -257,12 +276,8 @@ export async function validateFnd004Boundaries(root) {
       }
 
       for (const specifier of imports) {
-        if (
-          (displayPath.startsWith("packages/domain/") ||
-            displayPath.startsWith("packages/policy-engine/")) &&
-          purePackageDependency.test(specifier)
-        ) {
-          violations.push(`FND004_PURE_PACKAGE_IMPORT ${displayPath} -> ${specifier}`);
+        if (purePackageSource && !specifier.startsWith(".")) {
+          violations.push(`FND004_PURE_PACKAGE_EXTERNAL_IMPORT ${displayPath} -> ${specifier}`);
         }
         if (specifier === "@trazactivo/testkit" || specifier.startsWith("@trazactivo/testkit/")) {
           if (!isTestSource(displayPath)) {
