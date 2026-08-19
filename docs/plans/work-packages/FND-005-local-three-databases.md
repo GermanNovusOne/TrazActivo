@@ -2,14 +2,15 @@
 
 ## Estado
 
-`READY`
+`DONE`
 
 Autorización humana registrada el 2026-08-19 exclusivamente para FND-005, después de reconciliar la
 topología local, el aislamiento observable, el manejo de secretos, las operaciones destructivas y la
 superficie de integración. La implementación comenzó el 2026-08-19 en
 `codex/FND-005-local-three-databases`. `BLK-FND-005-001` quedó resuelto mediante validación runtime
-real; FND-005 permanece `READY` y no pasa a `DONE` sin revisión humana. Esta autorización no alcanza
-a DB-001, DB-002, DB-003 ni a ninguna otra Work Package.
+real. El cierre como `DONE` fue aprobado humanamente después del merge del PR #14 mediante
+`4084e3a436ef62636eb4ec523f95dd6c39967696` y de la validación post-merge satisfactoria. Este cierre
+no autoriza DB-001, DB-002, DB-003 ni ninguna otra Work Package.
 
 ## Objetivo
 
@@ -109,12 +110,15 @@ responden. No modifica ni intenta habilitar Docker Desktop, WSL2 o la configurac
 
 ## Bloqueos/TBD
 
-- `BLK-FND-005-001` — `RESOLVED` el 2026-08-19: Docker Engine 29.6.1 volvió a responder en el contexto
-  local canónico `desktop-linux`. La validación posterior ejecutó reset desde cero, dos `local:up`
-  idempotentes, identidad de las tres databases SQL Server, aislamiento e independencia A/B,
-  integración real `local-infrastructure`, architecture 50/50 y `npm run verify` exit 0. Se conserva
-  el bloqueo ambiental original como historia; no fue una incompatibilidad SQL Server/Azure SQL ni
-  requirió Decision Request.
+- `BLK-FND-005-001` — `RESOLVED` el 2026-08-19. Historia preservada: Docker Engine inicialmente no
+  respondía; el operador recuperó Docker Desktop, el contexto `desktop-linux` y Engine 29.6.1. Al
+  reanudar, `local:up` expuso `Msg 911` porque creación de databases, configuración de logins y users
+  compartían un mismo batch SQL. El bootstrap se separó en creación y verificación de databases,
+  configuración y verificación de logins, y verificación de target antes de configurar y verificar
+  cada user. Se agregaron regresiones de orden, arranque desde cero e idempotencia. Después pasaron el
+  runtime real Platform/A/B, dos `local:up`, aislamiento e independencia A/B, integración real,
+  architecture 50/50, clean checkout y validación post-merge con `npm run verify` exit 0. No fue una
+  incompatibilidad SQL Server/Azure SQL ni requirió Decision Request.
 - `TBD-DEV-002`, `TBD-DEV-003` y `TBD-DATA-001` permanecen sin cerrar y fuera del alcance local; no
   bloquean FND-005.
 - La revisión del 2026-08-19 no encontró una incompatibilidad relevante entre SQL Server local y Azure
@@ -234,30 +238,30 @@ y rechazar una implementación que use una sola database con schemas A/B.
 
 ## Criterios de aceptación
 
-- [ ] `local:up` es idempotente y tiene health verificable por database.
-- [ ] SQL Server local crea `platform_catalog`, `trazactivo_client_a` y `trazactivo_client_b` como tres
+- [x] `local:up` es idempotente y tiene health verificable por database.
+- [x] SQL Server local crea `platform_catalog`, `trazactivo_client_a` y `trazactivo_client_b` como tres
   databases reales con identidades distintas.
-- [ ] Platform, A y B poseen `DatabaseReference`, target a nivel de database y usuario local propios;
+- [x] Platform, A y B poseen `DatabaseReference`, target a nivel de database y usuario local propios;
   compartir host/puerto no invalida el criterio.
-- [ ] Una operación dirigida a A verifica A y no puede cambiar accidentalmente su target a B.
-- [ ] Una indisponibilidad dirigida a A no se presenta como indisponibilidad de B.
-- [ ] Una sola database con schemas A/B falla el control de aceptación.
-- [ ] No hay secretos, credenciales efectivas o connection strings reales en Git ni en logs.
-- [ ] Un clon limpio reproduce el entorno sin pasos ocultos, dado el secreto local documentado.
-- [ ] El preflight falla claramente si Docker Engine/Compose no están disponibles o no responden y no
+- [x] Una operación dirigida a A verifica A y no puede cambiar accidentalmente su target a B.
+- [x] Una indisponibilidad dirigida a A no se presenta como indisponibilidad de B.
+- [x] Una sola database con schemas A/B falla el control de aceptación.
+- [x] No hay secretos, credenciales efectivas o connection strings reales en Git ni en logs.
+- [x] Un clon limpio reproduce el entorno sin pasos ocultos, dado el secreto local documentado.
+- [x] El preflight falla claramente si Docker Engine/Compose no están disponibles o no responden y no
   modifica Docker Desktop ni WSL2.
-- [ ] La imagen SQL Server usa tag versionado o digest reproducible, nunca `latest`, y queda registrada
+- [x] La imagen SQL Server usa tag versionado o digest reproducible, nunca `latest`, y queda registrada
   en el reporte de implementación.
-- [ ] `local-infrastructure` ejecuta integración real sin convertir proyectos futuros en PASS.
+- [x] `local-infrastructure` ejecuta integración real sin convertir proyectos futuros en PASS.
 
 ## Casos negativos
 
-- [ ] Colisión de puertos falla con diagnóstico claro y sin revelar credenciales.
-- [ ] Reset sin señal local, contra endpoint remoto o con path/project name no canónico es rechazado.
-- [ ] Reset o `local:down` contra labels/nombres no reconocidos falla antes de borrar recursos.
-- [ ] Una sola database con schemas A/B no satisface aceptación.
-- [ ] La indisponibilidad de A no marca B como indisponible cuando B sigue accesible.
-- [ ] Los logs y diagnósticos no contienen passwords, tokens ni connection strings efectivas.
+- [x] Colisión de puertos falla con diagnóstico claro y sin revelar credenciales.
+- [x] Reset sin señal local, contra endpoint remoto o con path/project name no canónico es rechazado.
+- [x] Reset o `local:down` contra labels/nombres no reconocidos falla antes de borrar recursos.
+- [x] Una sola database con schemas A/B no satisface aceptación.
+- [x] La indisponibilidad de A no marca B como indisponible cuando B sigue accesible.
+- [x] Los logs y diagnósticos no contienen passwords, tokens ni connection strings efectivas.
 
 ## Pruebas obligatorias
 
@@ -284,14 +288,14 @@ resultado de indisponibilidad A/B y checkout desde clon limpio.
 
 ## Definition of Done
 
-- [ ] Integration real de `local-infrastructure` y architecture tests pasan sin falso PASS.
-- [ ] Platform DB y Client DB A/B reales e independientes quedan verificadas por identidad.
-- [ ] Health por database, preflight y runbook local quedan documentados y probados.
-- [ ] Reset y `local:down` fail-closed quedan respaldados por fixtures negativas.
-- [ ] Imagen SQL Server reproducible y selección exacta registradas en el reporte.
-- [ ] Clon limpio levanta y verifica el entorno con secretos suministrados fuera de Git.
-- [ ] No hay secretos ni valores sensibles en repositorio o logs.
-- [ ] No existe TBD P0 aplicable; los TBD Azure permanecen abiertos y fuera de alcance.
+- [x] Integration real de `local-infrastructure` y architecture tests pasan sin falso PASS.
+- [x] Platform DB y Client DB A/B reales e independientes quedan verificadas por identidad.
+- [x] Health por database, preflight y runbook local quedan documentados y probados.
+- [x] Reset y `local:down` fail-closed quedan respaldados por fixtures negativas.
+- [x] Imagen SQL Server reproducible y selección exacta registradas en el reporte.
+- [x] Clon limpio levanta y verifica el entorno con secretos suministrados fuera de Git.
+- [x] No hay secretos ni valores sensibles en repositorio o logs.
+- [x] No existe TBD P0 aplicable; los TBD Azure permanecen abiertos y fuera de alcance.
 
 ## Evidencia esperada
 
@@ -302,6 +306,26 @@ resultado de indisponibilidad A/B y checkout desde clon limpio.
 - Fixtures negativas de topología, puerto, reset, endpoint remoto y redacción de secretos.
 - Bootstrap y verificación desde clon limpio.
 - Resultado real del proyecto de integración `local-infrastructure`, con estados futuros preservados.
+
+## Evidencia de cierre
+
+- PR #14 implementado y mergeado en `architecture/v1.1-typescript` mediante
+  `4084e3a436ef62636eb4ec523f95dd6c39967696`.
+- Head implementado y commit de evidencia documental:
+  `21a90e430a73d1ed9855720ea3da415ca54f1ebb`.
+- Commit candidato validado en clean checkout:
+  `ea0e14cee984d7cf2bc672d21a0233449c91803b`.
+- Reporte de implementación y cierre: `docs/plans/reports/FND-005-report.md`.
+- Clean checkout: PASS; partió limpio y sin dependencias, secretos u outputs preexistentes, ejecutó
+  instalación, preflight, reset, runtime, integración, architecture, verify y down, y terminó limpio.
+- Validación post-merge: `npm ci`, preflight, reset, status, integración real, architecture 50/50,
+  unit 26/26, a11y 5/5, build, backend-smoke y `npm run verify`: exit 0.
+- Identidades verificadas: `platform-local` → `platform_catalog`, `client-a-local` →
+  `trazactivo_client_a` y `client-b-local` → `trazactivo_client_b`.
+- A→B, B→A y Platform→A fueron denegados; B permaneció disponible durante la indisponibilidad
+  dirigida de A y A fue recuperado.
+- Los scopes futuros conservaron sus estados explícitos; `git diff --check` terminó exit 0 y el
+  working tree post-merge quedó limpio.
 
 ## Riesgos
 
@@ -317,6 +341,9 @@ resultado de indisponibilidad A/B y checkout desde clon limpio.
   canónico. Los datos locales son recreables; ningún recurso externo forma parte del rollback.
 
 ## Condiciones de bloqueo
+
+- No queda una condición de bloqueo aplicable al cierre de FND-005; `BLK-FND-005-001` permanece
+  históricamente `RESOLVED`.
 
 - No puede demostrarse que Platform, A y B son databases reales distintas.
 - Una operación o probe puede resolver A como B, o una caída dirigida a A se confunde con B.
