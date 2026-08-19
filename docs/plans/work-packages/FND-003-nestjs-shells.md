@@ -2,7 +2,11 @@
 
 ## Estado
 
-`DRAFT`
+`READY`
+
+Autorizada exclusivamente para implementación por decisión humana del 2026-08-19. FND-001 está
+`DONE`, por lo que la dependencia y el gate de entrada están satisfechos. Esta transición no
+autoriza ninguna otra Work Package.
 
 ## Objetivo
 
@@ -26,7 +30,7 @@ Las tres aplicaciones levantan y construyen por separado, exponen health mínimo
 
 ## Gate de entrada
 
-- FND-001 completada.
+- FND-001 completada (`DONE`); gate de entrada satisfecho.
 
 ## Gate de salida
 
@@ -48,7 +52,7 @@ Las tres aplicaciones levantan y construyen por separado, exponen health mínimo
 
 ## Dependencias
 
-- FND-001.
+- FND-001 (`DONE`; satisfecha).
 
 ## Precondiciones
 
