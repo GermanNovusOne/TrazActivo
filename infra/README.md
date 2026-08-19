@@ -19,3 +19,9 @@ viable, TLS/WAF, observabilidad por tenant/stamp y restore por tenant.
 
 No se añadirá código IaC hasta aprobar ADR-013/014 y las dependencias del
 entorno productivo. Fuente: PDD secciones 05, 38, 44 y 45.
+
+## Entorno SQL local
+
+`infra/local/docker-compose.yml` pertenece a FND-005 y no es IaC de Azure. Define exclusivamente la
+instancia SQL Server local y las tres databases requeridas para Platform, Client A y Client B. Su
+operación y guardas se documentan en `docs/02-architecture/local-development.md`.

@@ -1,6 +1,7 @@
 # Canonical LF policy for the v1.1 TypeScript toolchain and Markdown documentation.
 /.gitattributes text eol=lf
 /.editorconfig text eol=lf
+/.env.example text eol=lf
 /.node-version text eol=lf
 /.npmrc text eol=lf
 /.nvmrc text eol=lf
@@ -52,3 +53,7 @@
 /scripts/**/*.yml text eol=lf
 
 /docs/**/*.md text eol=lf
+
+/infra/**/*.md text eol=lf
+/infra/**/*.yaml text eol=lf
+/infra/**/*.yml text eol=lf
