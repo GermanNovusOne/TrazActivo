@@ -28,6 +28,7 @@
     "test:golden": "node scripts/run-suite.mjs test:golden",
     "test:e2e": "node scripts/run-suite.mjs test:e2e",
     "test:a11y": "node scripts/run-suite.mjs test:a11y",
+    "test:backend-smoke": "node scripts/fnd-003-smoke.mjs",
     "build": "node scripts/run-suite.mjs build",
     "dev": "node scripts/not-implemented.mjs dev FND-002,FND-003",
     "local:up": "node scripts/not-implemented.mjs local:up FND-005",
@@ -52,6 +53,7 @@
     "jest-axe": "11.0.0",
     "jsdom": "29.1.1",
     "prettier": "3.9.6",
+    "tsx": "4.23.12",
     "typescript": "5.9.3",
     "typescript-eslint": "8.67.0",
     "vitest": "4.1.10"
