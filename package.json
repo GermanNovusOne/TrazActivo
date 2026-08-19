@@ -25,7 +25,7 @@
     "test:integration": "node scripts/run-suite.mjs test:integration",
     "test:contract": "node scripts/run-suite.mjs test:contract",
     "test:multiclient": "node scripts/run-suite.mjs test:multiclient",
-    "test:golden": "node scripts/run-suite.mjs test:golden",
+    "test:golden": "node scripts/fnd-004-golden.mjs",
     "test:e2e": "node scripts/run-suite.mjs test:e2e",
     "test:a11y": "node scripts/run-suite.mjs test:a11y",
     "test:backend-smoke": "node scripts/fnd-003-smoke.mjs",
