@@ -7,6 +7,7 @@ import { readJson } from "./toolchain.mjs";
 const ignoredDirectories = new Set([
   ".git",
   ".idea",
+  ".next",
   ".vs",
   ".vscode",
   "artifacts",
@@ -309,6 +310,16 @@ export async function validateRepository(root, { legacyRef } = {}) {
     if (record.kind === "app" && record.manifest.private !== true) {
       violations.push(`APP_MUST_BE_PRIVATE ${record.path}`);
     }
+
+    const nextFrontend = new Set(["apps/control-web", "apps/portal-web"]).has(
+      record.relativeDirectory,
+    );
+    if (
+      nextFrontend &&
+      record.manifest.scripts?.typecheck !== "next typegen && tsc --project tsconfig.json --noEmit"
+    ) {
+      violations.push(`NEXT_TYPECHECK_NOT_REPRODUCIBLE ${record.path}`);
+    }
   }
 
   if (workspaceRecords.some(({ relativeDirectory }) => relativeDirectory === "packages/common")) {
@@ -350,11 +361,26 @@ export async function validateRepository(root, { legacyRef } = {}) {
               violations.push(`APP_TO_APP_IMPORT ${displayPath} -> ${appDirectory}`);
             }
           }
+
+          const legacyBackendRoot = resolve(root, "src");
+          if (
+            frontend &&
+            (target === legacyBackendRoot || target.startsWith(`${legacyBackendRoot}${sep}`))
+          ) {
+            violations.push(`FRONTEND_BACKEND_ACCESS ${displayPath} -> ${specifier}`);
+          }
         }
 
         const prismaImport = specifier === "prisma" || specifier.startsWith("@prisma/");
+        const backendImport =
+          specifier === "@nestjs" ||
+          specifier.startsWith("@nestjs/") ||
+          /^(?:@trazactivo\/)?(?:control-api|data-api|worker)(?:\/|$)/u.test(specifier);
         if (frontend && (prismaImport || specifier.includes("database"))) {
           violations.push(`FRONTEND_DATA_ACCESS ${displayPath} -> ${specifier}`);
+        }
+        if (frontend && backendImport) {
+          violations.push(`FRONTEND_BACKEND_ACCESS ${displayPath} -> ${specifier}`);
         }
         if (
           prismaImport &&
@@ -395,6 +421,14 @@ export async function validateRepository(root, { legacyRef } = {}) {
     for (const { name } of dependencyEntries(record.manifest)) {
       if (frontend && (name === "prisma" || name.startsWith("@prisma/"))) {
         violations.push(`FRONTEND_DATA_DEPENDENCY ${record.path} ${name}`);
+      }
+      if (
+        frontend &&
+        (name === "@nestjs" ||
+          name.startsWith("@nestjs/") ||
+          /^(?:@trazactivo\/)?(?:control-api|data-api|worker)$/u.test(name))
+      ) {
+        violations.push(`FRONTEND_BACKEND_DEPENDENCY ${record.path} ${name}`);
       }
       if (purePackage && /^(?:@nestjs|@prisma|@azure|next$|react$|prisma$)/u.test(name)) {
         violations.push(`PURE_PACKAGE_FRAMEWORK_DEPENDENCY ${record.path} ${name}`);
