@@ -6,7 +6,9 @@
 
 Autorización humana registrada el 2026-08-19 exclusivamente para FND-005, después de reconciliar la
 topología local, el aislamiento observable, el manejo de secretos, las operaciones destructivas y la
-superficie de integración. FND-005 es la única Work Package en `READY`; esta autorización no alcanza
+superficie de integración. La implementación comenzó el 2026-08-19 en
+`codex/FND-005-local-three-databases`. `BLK-FND-005-001` quedó resuelto mediante validación runtime
+real; FND-005 permanece `READY` y no pasa a `DONE` sin revisión humana. Esta autorización no alcanza
 a DB-001, DB-002, DB-003 ni a ninguna otra Work Package.
 
 ## Objetivo
@@ -107,6 +109,12 @@ responden. No modifica ni intenta habilitar Docker Desktop, WSL2 o la configurac
 
 ## Bloqueos/TBD
 
+- `BLK-FND-005-001` — `RESOLVED` el 2026-08-19: Docker Engine 29.6.1 volvió a responder en el contexto
+  local canónico `desktop-linux`. La validación posterior ejecutó reset desde cero, dos `local:up`
+  idempotentes, identidad de las tres databases SQL Server, aislamiento e independencia A/B,
+  integración real `local-infrastructure`, architecture 50/50 y `npm run verify` exit 0. Se conserva
+  el bloqueo ambiental original como historia; no fue una incompatibilidad SQL Server/Azure SQL ni
+  requirió Decision Request.
 - `TBD-DEV-002`, `TBD-DEV-003` y `TBD-DATA-001` permanecen sin cerrar y fuera del alcance local; no
   bloquean FND-005.
 - La revisión del 2026-08-19 no encontró una incompatibilidad relevante entre SQL Server local y Azure

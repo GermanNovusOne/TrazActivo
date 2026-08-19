@@ -80,6 +80,10 @@ npm run verify
 Los comandos, estados explícitos de suites futuras y criterios de actualización del toolchain se
 documentan en `docs/04-development/workspace-toolchain.md`.
 
+La infraestructura SQL Server local de FND-005 requiere Docker Desktop con WSL2 y secretos locales no
+versionados. El flujo `local:preflight`, `local:up`, `local:status`, integración, reset y down está
+documentado en `docs/02-architecture/local-development.md`.
+
 ### Planificación
 
 Entregar al agente el repositorio y el archivo:

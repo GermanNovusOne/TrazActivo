@@ -1,0 +1,48 @@
+name: trazactivo-local-fnd005
+
+services:
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-CU26-ubuntu-22.04@sha256:ba4c8329f48fb8f02e1416be6a930ebfd71268caee78aa985f3af4315e457c89
+    container_name: trazactivo-local-fnd005-sqlserver
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_PID: Developer
+      MSSQL_SA_PASSWORD: ${MSSQL_SA_PASSWORD:?MSSQL_SA_PASSWORD must be supplied outside Git}
+    ports:
+      - "${TRAZACTIVO_SQL_PORT:-14333}:1433"
+    volumes:
+      - sqlserver_data:/var/opt/mssql
+    networks:
+      - local_database
+    labels:
+      com.trazactivo.project: trazactivo-local-fnd005
+      com.trazactivo.scope: local-infrastructure
+      com.trazactivo.wp: FND-005
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - >-
+          SQLCMDPASSWORD="$${MSSQL_SA_PASSWORD}"
+          /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -C -b
+          -Q "SET NOCOUNT ON; SELECT 1" >/dev/null
+      interval: 5s
+      timeout: 5s
+      retries: 36
+      start_period: 20s
+    restart: unless-stopped
+
+networks:
+  local_database:
+    name: trazactivo-local-fnd005-network
+    labels:
+      com.trazactivo.project: trazactivo-local-fnd005
+      com.trazactivo.scope: local-infrastructure
+      com.trazactivo.wp: FND-005
+
+volumes:
+  sqlserver_data:
+    name: trazactivo-local-fnd005-sqlserver-data
+    labels:
+      com.trazactivo.project: trazactivo-local-fnd005
+      com.trazactivo.scope: local-infrastructure
+      com.trazactivo.wp: FND-005

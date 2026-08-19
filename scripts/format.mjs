@@ -34,6 +34,7 @@ const selectedDirectories = [
   "apps",
   "docs/04-development",
   "docs/plans/reports",
+  "infra",
   "packages",
   "scripts",
 ];

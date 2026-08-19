@@ -67,19 +67,22 @@ packages `common`, dependencias sin versión exacta y extensión de la foundatio
 
 ## Contrato de comandos
 
-| Comando                            | Comportamiento en FND-001                                                           |
-| ---------------------------------- | ----------------------------------------------------------------------------------- |
-| `npm run format:check`             | Comprueba formato de toolchain, apps, packages y documentos de implementación       |
-| `npm run lint`                     | Ejecuta ESLint con cero warnings permitidos                                         |
-| `npm run typecheck`                | Ejecuta TypeScript estricto y despacha typecheck de workspaces existentes           |
-| `npm run test:architecture`        | Ejecuta Vitest sobre reglas positivas y negativas del repositorio                   |
-| `npm run verify`                   | Ejecuta todos los controles obligatorios en orden y se detiene ante el primer fallo |
-| `npm run verify:failure-probe`     | Demuestra que un hijo con exit 73 se propaga y corta la secuencia                   |
-| `npm run dev` / `local:*` / `db:*` | Devuelven exit 2 y `NOT_IMPLEMENTED_SCOPE` hasta la WP propietaria                  |
+| Comando                        | Comportamiento en FND-001                                                           |
+| ------------------------------ | ----------------------------------------------------------------------------------- |
+| `npm run format:check`         | Comprueba formato de toolchain, apps, packages y documentos de implementación       |
+| `npm run lint`                 | Ejecuta ESLint con cero warnings permitidos                                         |
+| `npm run typecheck`            | Ejecuta TypeScript estricto y despacha typecheck de workspaces existentes           |
+| `npm run test:architecture`    | Ejecuta Vitest sobre reglas positivas y negativas del repositorio                   |
+| `npm run verify`               | Ejecuta todos los controles obligatorios en orden y se detiene ante el primer fallo |
+| `npm run verify:failure-probe` | Demuestra que un hijo con exit 73 se propaga y corta la secuencia                   |
+| `npm run dev` / `db:*`         | Devuelven exit 2 y `NOT_IMPLEMENTED_SCOPE` hasta la WP propietaria                  |
+| `npm run local:*`              | FND-005 entrega preflight/up/status/reset/down reales y fail-closed para SQL Server |
 
-`test:unit`, `test:integration`, `test:contract`, `test:multiclient`, `test:e2e`, `test:a11y` y
-`build` despachan scripts reales de workspaces cuando existen. Mientras la superficie no fue
-entregada, imprimen `NOT_IMPLEMENTED_SCOPE` con la WP propietaria. `test:golden` imprime
+`test:unit`, `test:contract`, `test:multiclient`, `test:e2e`, `test:a11y` y `build` despachan scripts
+reales de workspaces cuando existen. `test:integration -- --project local-infrastructure` ejecuta
+desde FND-005 una integración SQL Server real; los proyectos de integración futuros mantienen
+`NOT_IMPLEMENTED_SCOPE`. Mientras otra superficie no fue entregada, imprime `NOT_IMPLEMENTED_SCOPE`
+con la WP propietaria. `test:golden` imprime
 `NOT_APPLICABLE_SCOPE`, con QA-002 como WP propietaria de consolidar esa aplicabilidad, porque el
 walking skeleton no publica cálculo contable. Esto no aprueba ni publica un golden dataset. Estos
 estados no se presentan como PASS.
