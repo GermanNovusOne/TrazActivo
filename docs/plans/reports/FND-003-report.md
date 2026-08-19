@@ -8,9 +8,11 @@ idle, sin jobs ni mensajería funcional. Los tres runtimes tienen configuración
 startup y shutdown controlados, y límites automatizados.
 
 - Work Package: `FND-003-nestjs-shells`.
-- Estado durante la implementación: `READY`; no se cambia a `DONE`.
+- Estado durante la implementación: `READY`.
+- Estado documental post-merge: `DONE`, por decisión humana de cierre.
 - Branch: `codex/FND-003-nestjs-shells`.
 - Base: `architecture/v1.1-typescript`.
+- PR de implementación: #8; merge commit integrado: `860910a`.
 - Dependencia satisfecha: FND-001 (`DONE`).
 - FND-002 permanece `DONE`; FND-004, FND-005 y todas las demás WPs permanecen sin autorización.
 
@@ -228,6 +230,22 @@ Los tres casos negativos definidos por la WP están cubiertos y aprobados.
   posteriores.
 - No se ejecutaron OpenAPI, autenticación, Entra ID, Service Bus, Azure ni despliegues porque están
   prohibidos o fuera de alcance para FND-003.
+
+## Cierre post-merge
+
+- PR #8 mergeado en `architecture/v1.1-typescript` mediante `860910a`.
+- Evidencia de implementación y validación: este reporte.
+- `npm ci`: exit 0.
+- `npm run verify`: exit 0; registró `VERIFY_RUNNING step=build`, posteriormente
+  `VERIFY_RUNNING step=test:backend-smoke` y finalmente
+  `VERIFY_COMPLETE result=CONTROLS_EXECUTED_WITH_EXPLICIT_SCOPE_STATUSES`.
+- Unit tests: 24/24; architecture tests: 24/24.
+- Builds independientes de Data API, Control API y worker: exit 0.
+- Data API health y Control API health: HTTP 200; worker idle correcto.
+- Los tres shutdown liberaron correctamente sus handles.
+- `git diff --check`: exit 0; working tree limpio post-merge.
+- No se implementó FND-004, FND-005 ni ninguna WP posterior. Ninguna otra WP fue autorizada por
+  este cierre.
 
 ## Trazabilidad
 
