@@ -26,7 +26,8 @@ OpenAPI funcional, `AssetItem`, Service Bus, job funcional ni otra Work Package.
 - El worker conserva vivo únicamente el application context mediante un timer idle técnico.
 - Startup y shutdown emiten registros JSON construidos con campos allowlist.
 - Los servidores HTTP y el handle idle se liberan de forma idempotente.
-- Las pruebas unitarias y de arquitectura reales están integradas al contrato raíz.
+- Las pruebas unitarias, de arquitectura y de smoke backend reales están integradas al contrato
+  raíz.
 
 ## Archivos creados o modificados
 
@@ -63,7 +64,7 @@ OpenAPI funcional, `AssetItem`, Service Bus, job funcional ni otra Work Package.
 ### Toolchain, arquitectura y documentación
 
 - `package.json` y `package-lock.json`.
-- `scripts/fnd-003-rules.mjs`, `scripts/fnd-003.architecture.test.mjs` y
+- `scripts/verify.mjs`, `scripts/fnd-003-rules.mjs`, `scripts/fnd-003.architecture.test.mjs` y
   `scripts/fnd-003-smoke.mjs`.
 - `apps/README.md`.
 - `docs/04-development/backend-shells.md`.
@@ -96,6 +97,11 @@ son compatibles con Node.js 24.13.0 y npm 11.6.2. `npm audit` no reporta vulnera
 - No se creó package compartido: FND-004 continúa sin autorización. La duplicación mínima del
   shutdown y la configuración evita transferir ownership o acoplar aplicaciones.
 - No existe Prisma; el architecture gate lo rechaza en los shells y específicamente en health.
+- El contrato raíz de `verify` ejecuta `build` y, sólo después, `test:backend-smoke`; conserva el
+  comportamiento fail-fast y protege startup, health HTTP y shutdown en el gate general.
+- Una regresión de arquitectura inspecciona `package.json` y la secuencia ejecutable de `verify`:
+  rechaza eliminar u omitir el smoke, dejarlo sólo como referencia no ejecutada o ubicarlo antes
+  de `build`.
 
 ## Separación Data / Control / Worker
 
@@ -131,8 +137,9 @@ Control API:
 { "service": "control-api", "plane": "control", "status": "ok", "version": "0.0.0" }
 ```
 
-El smoke construye y levanta ambas APIs en puertos aislados, obtiene HTTP 200 y valida el body. No
-hay dependencia, indicador o simulación de DB.
+El smoke levanta ambas APIs ya compiladas en puertos aislados, obtiene HTTP 200 y valida el body.
+El contrato raíz ejecuta primero `build` y después este smoke, sin dependencia, indicador o
+simulación de DB.
 
 ## Shutdown
 
@@ -153,18 +160,20 @@ hay dependencia, indicador o simulación de DB.
 | `npm run lint`                               | Exit 0    | ESLint sin errores ni warnings                             |
 | `npm run typecheck`                          | Exit 0    | Raíz y seis workspaces conformes                           |
 | `npm run test:unit`                          | Exit 0    | 7 archivos, 24/24 pruebas aprobadas                        |
-| `npm run test:architecture`                  | Exit 0    | 3 archivos, 20/20 pruebas aprobadas                        |
+| `npm run test:architecture`                  | Exit 0    | 3 archivos, 24/24 pruebas aprobadas                        |
 | `npm run build --workspace apps/data-api`    | Exit 0    | Build TypeScript independiente                             |
 | `npm run build --workspace apps/control-api` | Exit 0    | Build TypeScript independiente                             |
 | `npm run build --workspace apps/worker`      | Exit 0    | Build TypeScript independiente                             |
-| `npm run test:backend-smoke`                 | Exit 0    | Health 200 y shutdown liberado en las tres aplicaciones    |
+| `npm run test:backend-smoke`                 | Exit 0    | Health 200, worker idle y tres shutdown sin handles        |
 | `npm run build`                              | Exit 0    | Tres backends, dos frontends y design-system construidos   |
-| `npm run verify`                             | Exit 0    | `CONTROLS_EXECUTED_WITH_EXPLICIT_SCOPE_STATUSES`           |
+| `npm run verify`                             | Exit 0    | Ejecuta `build` → `test:backend-smoke`; resultado completo |
+| `npm audit --audit-level=high`               | Exit 0    | 0 vulnerabilidades                                         |
 | `git diff --check`                           | Exit 0    | Sin errores de whitespace                                  |
 
 `verify` conserva `test:integration`, `test:contract`, `test:multiclient` y `test:e2e` como
 `NOT_IMPLEMENTED_SCOPE`, y `test:golden` como `NOT_APPLICABLE_SCOPE`. No se presentan como PASS.
-La suite a11y de FND-002 continúa ejecutándose; FND-003 no agrega superficie visual.
+Después de las suites y de `build`, ejecuta obligatoriamente `test:backend-smoke` con el mismo
+fail-fast. La suite a11y de FND-002 continúa ejecutándose; FND-003 no agrega superficie visual.
 
 ## Criterios de aceptación
 

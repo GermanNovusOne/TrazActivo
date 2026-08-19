@@ -5,7 +5,7 @@ import { resolve } from "node:path";
 import { afterEach, describe, expect, test } from "vitest";
 
 import { validateRepository } from "./architecture-rules.mjs";
-import { validateFnd003Boundaries } from "./fnd-003-rules.mjs";
+import { validateBackendSmokeVerifyContract, validateFnd003Boundaries } from "./fnd-003-rules.mjs";
 import { repositoryRoot } from "./toolchain.mjs";
 
 const temporaryDirectories = [];
@@ -70,6 +70,7 @@ describe("FND-003 backend shell boundaries", () => {
       }),
     ).resolves.toEqual([]);
     await expect(validateFnd003Boundaries(repositoryRoot)).resolves.toEqual([]);
+    await expect(validateBackendSmokeVerifyContract(repositoryRoot)).resolves.toEqual([]);
 
     for (const application of ["control-api", "data-api", "worker"]) {
       const manifest = JSON.parse(
@@ -180,6 +181,59 @@ describe("FND-003 backend shell boundaries", () => {
 
     expect(await validateFnd003Boundaries(root)).toContain(
       "FND003_WORKER_CONTEXT_MISSING apps/worker/src/application/consumer.ts",
+    );
+  });
+
+  test("the root backend smoke script cannot be removed", async () => {
+    const root = await fixture({
+      "package.json": JSON.stringify({ scripts: {} }),
+      "scripts/verify.mjs": 'const requiredScripts = ["build", "test:backend-smoke"];',
+    });
+
+    expect(await validateBackendSmokeVerifyContract(root)).toContain(
+      "FND003_BACKEND_SMOKE_ROOT_SCRIPT_MISSING",
+    );
+  });
+
+  test("backend smoke cannot be omitted from the executable verify sequence", async () => {
+    const root = await fixture({
+      "package.json": JSON.stringify({
+        scripts: { "test:backend-smoke": "node scripts/fnd-003-smoke.mjs" },
+      }),
+      "scripts/verify.mjs": 'const requiredScripts = ["build"];',
+    });
+
+    expect(await validateBackendSmokeVerifyContract(root)).toContain(
+      "FND003_BACKEND_SMOKE_OUTSIDE_VERIFY",
+    );
+  });
+
+  test("mentioning backend smoke outside the executable verify sequence is rejected", async () => {
+    const root = await fixture({
+      "package.json": JSON.stringify({
+        scripts: { "test:backend-smoke": "node scripts/fnd-003-smoke.mjs" },
+      }),
+      "scripts/verify.mjs": [
+        'const requiredScripts = ["build"];',
+        'const documentedOnly = "test:backend-smoke";',
+      ].join("\n"),
+    });
+
+    expect(await validateBackendSmokeVerifyContract(root)).toContain(
+      "FND003_BACKEND_SMOKE_OUTSIDE_VERIFY",
+    );
+  });
+
+  test("backend smoke cannot run before build", async () => {
+    const root = await fixture({
+      "package.json": JSON.stringify({
+        scripts: { "test:backend-smoke": "node scripts/fnd-003-smoke.mjs" },
+      }),
+      "scripts/verify.mjs": 'const requiredScripts = ["test:backend-smoke", "build"];',
+    });
+
+    expect(await validateBackendSmokeVerifyContract(root)).toContain(
+      "FND003_BACKEND_SMOKE_BEFORE_BUILD",
     );
   });
 });

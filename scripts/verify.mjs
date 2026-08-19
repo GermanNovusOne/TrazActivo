@@ -14,6 +14,7 @@ const requiredScripts = [
   "test:e2e",
   "test:a11y",
   "build",
+  "test:backend-smoke",
 ];
 
 export function runSequence(steps) {

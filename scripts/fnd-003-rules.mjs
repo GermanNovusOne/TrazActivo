@@ -80,6 +80,66 @@ function workerHasExplicitContext(source) {
   return /\b(?:ClientContext|JobEnvelope)\b|@trazactivo\/client-context/u.test(source);
 }
 
+function extractRequiredVerifySteps(source) {
+  const declaration = source.match(/const requiredScripts = \[(?<steps>[\s\S]*?)\];/u);
+  if (!declaration?.groups?.steps) {
+    return undefined;
+  }
+
+  return [...declaration.groups.steps.matchAll(/["'](?<name>[^"']+)["']/gu)].map(
+    (match) => match.groups.name,
+  );
+}
+
+export async function validateBackendSmokeVerifyContract(root) {
+  const violations = [];
+  let manifest;
+  let verifySource;
+
+  try {
+    manifest = JSON.parse(await readFile(resolve(root, "package.json"), "utf8"));
+  } catch {
+    violations.push("FND003_BACKEND_SMOKE_ROOT_MANIFEST_INVALID");
+  }
+
+  try {
+    verifySource = await readFile(resolve(root, "scripts", "verify.mjs"), "utf8");
+  } catch {
+    violations.push("FND003_BACKEND_SMOKE_VERIFY_UNREADABLE");
+  }
+
+  if (!manifest?.scripts?.["test:backend-smoke"]) {
+    violations.push("FND003_BACKEND_SMOKE_ROOT_SCRIPT_MISSING");
+  }
+
+  if (verifySource !== undefined) {
+    const requiredSteps = extractRequiredVerifySteps(verifySource);
+    if (!requiredSteps) {
+      violations.push("FND003_BACKEND_SMOKE_VERIFY_SEQUENCE_UNREADABLE");
+    } else {
+      const buildIndex = requiredSteps.indexOf("build");
+      const smokeIndexes = requiredSteps.flatMap((step, index) =>
+        step === "test:backend-smoke" ? [index] : [],
+      );
+
+      if (buildIndex === -1) {
+        violations.push("FND003_BACKEND_SMOKE_BUILD_MISSING");
+      }
+      if (smokeIndexes.length === 0) {
+        violations.push("FND003_BACKEND_SMOKE_OUTSIDE_VERIFY");
+      }
+      if (smokeIndexes.length > 1) {
+        violations.push("FND003_BACKEND_SMOKE_DUPLICATED");
+      }
+      if (buildIndex !== -1 && smokeIndexes.some((index) => index < buildIndex)) {
+        violations.push("FND003_BACKEND_SMOKE_BEFORE_BUILD");
+      }
+    }
+  }
+
+  return [...new Set(violations)].sort();
+}
+
 export async function validateFnd003Boundaries(root) {
   const violations = [];
 
