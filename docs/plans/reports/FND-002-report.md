@@ -9,12 +9,31 @@ autenticación, contexto de cliente, APIs, persistencia ni lógica de negocio.
 
 - Work Package: `FND-002-nextjs-shells`.
 - Estado de entrada: `READY`.
+- Estado de cierre: `DONE`.
 - Branch: `codex/FND-002-nextjs-shells`.
 - Base: `architecture/v1.1-typescript`.
 - Dependencia satisfecha: FND-001 (`DONE`).
 - Owner inicial de `packages/design-system`: exclusivamente FND-002.
 
 No se implementó FND-003, FND-004, FND-005 ni otra Work Package.
+
+## Cierre post-merge
+
+El cierre de FND-002 fue aprobado humanamente después de integrar el PR #5 en
+`architecture/v1.1-typescript` mediante el merge commit `a5707e6`.
+
+- Reporte de implementación y cierre: `docs/plans/reports/FND-002-report.md`.
+- `npm ci`: exit 0.
+- `npm run verify`: exit 0, con resultado
+  `VERIFY_COMPLETE result=CONTROLS_EXECUTED_WITH_EXPLICIT_SCOPE_STATUSES`.
+- Unit tests: 12/12.
+- Architecture tests: 14/14.
+- Accessibility tests: 5/5, sin infracciones axe.
+- Builds independientes de `control-web`, `portal-web` y `design-system`: exit 0.
+- `git diff --check`: exit 0.
+- `git status`: working tree limpio post-merge.
+- El formatter ignora `.next` y `next-env.d.ts`; `next-env.d.ts` no está trackeado.
+- FND-003, FND-004 y FND-005 no fueron implementadas, permanecen `DRAFT` y no están autorizadas.
 
 ## Objetivo cumplido
 
