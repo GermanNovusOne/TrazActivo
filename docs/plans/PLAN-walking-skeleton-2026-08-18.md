@@ -6,9 +6,10 @@
 
 La transición de este plan y de cualquiera de sus Work Packages a `READY` requiere revisión humana
 de Germán/Eduardo y el cierre de los bloqueos aplicables. BAS-001, FND-001, FND-002, FND-003 y
-FND-004 están `DONE` por decisiones humanas aprobadas. No existe actualmente ninguna Work Package
-en `READY`. FND-005 y todas las Work Packages que no están ya finalizadas permanecen `DRAFT` y no
-están autorizadas para implementación.
+FND-004 están `DONE` por decisiones humanas aprobadas. FND-005 es la única Work Package en `READY`,
+mediante autorización humana del 2026-08-19 después de reconciliar su topología SQL Server local y
+sus guardas. Todas las demás Work Packages que no están ya finalizadas permanecen `DRAFT` y no están
+autorizadas para implementación.
 
 ## 1. Decisión o resultado buscado
 
@@ -147,16 +148,17 @@ La rama observada al elaborar el plan fue `planning/walking-skeleton-v1.1`. BAS-
 | Finalizada | FND-002 | `DONE`; PR #5 mergeado mediante `a5707e6` y reporte `docs/plans/reports/FND-002-report.md` como evidencia de cierre |
 | Finalizada | FND-003 | `DONE`; PR #8 mergeado mediante `860910a` y reporte `docs/plans/reports/FND-003-report.md` como evidencia de cierre |
 | Finalizada | FND-004 | `DONE`; PR #11 mergeado mediante `7a9e35a`, reporte FND-004 y `BLK-FND-004-001` preservado como `RESOLVED` |
+| Autorizada | FND-005 | Única WP en `READY`; FND-001 `DONE`, topología SQL Server local reconciliada y sin bloqueo P0 aplicable |
 | Bloqueo directo futuro | CLI-003 | `DR-WS-IDENTITY-001`; sólo identidad controlada local/test, sin decidir identidad definitiva, MFA ni Gate 4 |
 | Bloqueo directo futuro | CLI-004 | `DR-WS-DS-001`, que sólo puede resolverse con evidencia de SPI-001 |
 | No bloquea el skeleton local | TBD-PROD-001 | Afecta el alcance final del MVP comercial, no Gate 0 ni foundation |
 | No bloquea CLI-004 | TBD-DATA-002 | Conserva su bloqueo autoritativo sobre la prueba de carga; no se declara cerrado |
 
-En el snapshot actual, FND-001, FND-002, FND-003 y FND-004 están finalizadas y no existe ninguna WP
-en `READY`. FND-005 y todas las WPs aún no finalizadas permanecen `DRAFT` y no están autorizadas.
-Ninguna WP puede pasar a `READY` sólo por despejar dependencias: todas requieren revisión humana de
-Germán/Eduardo; la ejecución vuelve a detenerse en CLI-003 y CLI-004 si sus DR respectivos siguen
-abiertos.
+En el snapshot actual, FND-001, FND-002, FND-003 y FND-004 están finalizadas. FND-005 es la única WP
+en `READY`, autorizada humanamente el 2026-08-19; todas las demás WPs aún no finalizadas permanecen
+`DRAFT` y no están autorizadas. Ninguna WP puede pasar a `READY` sólo por despejar dependencias: todas
+requieren revisión humana de Germán/Eduardo; la ejecución vuelve a detenerse en CLI-003 y CLI-004 si
+sus DR respectivos siguen abiertos.
 
 ## 7. Arquitectura afectada
 
@@ -289,7 +291,7 @@ npm run test:a11y
 npm run build
 ```
 
-`test:golden` no puede simular aprobación. En Gate 3 ejecutará un control real de aplicabilidad: debe reportar `NOT_APPLICABLE_SCOPE` porque no existe cálculo/política contable en el Walking Skeleton y debe fallar si detecta una superficie contable publicada sin dataset aprobado. No se contabiliza como PASS contable. Los demás controles son aplicables y deben ejecutar pruebas reales.
+`test:golden` no puede simular aprobación. En Gate 3 ejecutará un control real de aplicabilidad: debe reportar `NOT_APPLICABLE_SCOPE` porque no existe cálculo/política contable en el Walking Skeleton y debe fallar si detecta una superficie contable publicada sin dataset aprobado. No se contabiliza como PASS contable. FND-005 activa exclusivamente el proyecto real `test:integration -- --project local-infrastructure`; los proyectos de integración de WPs futuras conservan estados explícitos de scope y no se presentan como implementados. Los demás controles aplicables deben ejecutar pruebas reales.
 
 ## 11. Migraciones y datos
 
@@ -346,8 +348,9 @@ exit 0, `npm run verify` exit 0, unit 26/26, architecture 35/35, golden
 backend-smoke de FND-003 exit 0, `git diff --check` exit 0 y working tree limpio. El checkout limpio
 previo validó architecture 35/35 y verify exit 0. `packages/design-system` no fue modificado,
 `testkit` se consume mediante `@trazactivo/testkit` y domain/policy-engine conservan pureza
-deny-by-default. `BLK-FND-004-001` permanece históricamente `RESOLVED`. Este cierre no autoriza
-FND-005 ni ninguna WP adicional.
+deny-by-default. `BLK-FND-004-001` permanece históricamente `RESOLVED`. Este cierre no autorizó por
+sí mismo FND-005 ni ninguna WP adicional; la autorización posterior y separada de FND-005 se registra
+en su Work Package y en el estado vigente de este plan.
 
 - bootstrap desde clon limpio documentado;
 - OpenAPI Control/Data y diff del cliente generado;
@@ -381,7 +384,7 @@ FND-005 ni ninguna WP adicional.
 ```text
 Gate 0 / BAS-001 [precondición satisfecha externamente]
 → FND-001 [DONE; PR #1 y reporte de implementación]
-→ FND-003 [DONE; PR #8 y merge `860910a`] + FND-005 [DRAFT; sin autorización]
+→ FND-003 [DONE; PR #8 y merge `860910a`] + FND-005 [READY; única WP autorizada]
 → DB-001 + DB-002
 → DB-003
 → CLI-001
@@ -405,8 +408,8 @@ Gate 0 / BAS-001 [precondición satisfecha externamente]
 ### Paralelización recomendada
 
 - FND-001, FND-002, FND-003 y FND-004 están `DONE`; `BLK-FND-004-001` permanece históricamente
-  `RESOLVED`. No existe una WP en `READY`. FND-005 permanece `DRAFT` y sólo podrá avanzar tras
-  autorización humana explícita.
+  `RESOLVED`. FND-005 es la única WP en `READY` por autorización humana explícita del 2026-08-19.
+  Ninguna otra WP está autorizada.
 - En Wave 1: API-001 puede avanzar tras FND-003; DB-001 y DB-002 pueden avanzar en paralelo después de FND-003/FND-005; DB-003 espera a ambos schemas.
 - AST-001 puede adelantarse una vez cerrado FND-004, en paralelo con la frontera Client; AST-002 espera CLI-004/CLI-005 y DB-002.
 - En Wave 4: API-002, AUD-001 y OBS-001 pueden avanzar en paralelo después de AST-003; UX-001 empieza cuando se satisfacen sus dependencias. En Wave 5, QA-001 consolida backend/contrato y QA-002 realiza la aceptación final.
@@ -416,8 +419,8 @@ Gate 0 / BAS-001 [precondición satisfecha externamente]
 
 El plan se considera completado, no implementado, cuando todos sus WP existen y tienen
 trazabilidad, dependencias, pruebas y bloqueos explícitos. En el estado actual, BAS-001, FND-001,
-FND-002, FND-003 y FND-004 están `DONE`; no existe ninguna WP en `READY`. FND-005 y todas las WPs
-aún no finalizadas permanecen `DRAFT` y no están autorizadas. El Walking Skeleton sólo se considera
+FND-002, FND-003 y FND-004 están `DONE`; FND-005 es la única WP en `READY`. Todas las demás WPs aún
+no finalizadas permanecen `DRAFT` y no están autorizadas. El Walking Skeleton sólo se considera
 implementado y aprobado localmente cuando:
 
 - Gate 0, Gate 1, Gate 2 y Gate 3 tienen evidencia humana de salida;
