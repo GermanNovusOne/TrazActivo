@@ -221,8 +221,50 @@ idempotencia, denegación A↔B e independencia de Client B durante una indispon
 Las credenciales de validación fueron efímeras, distintas, generadas en memoria y no se escribieron
 ni imprimieron.
 
-No hay cambios en `apps/`, PDD, ADR Accepted, `package-lock.json` o WPs distintas de FND-005. No se
-hizo commit, push, PR o merge.
+No hay cambios en `apps/`, PDD, ADR Accepted, `package-lock.json` o WPs distintas de FND-005. La
+implementación validada reside en el commit candidato local
+`ea0e14cee984d7cf2bc672d21a0233449c91803b`.
+
+## Validación desde clean checkout
+
+Se creó un directorio temporal nuevo fuera del repositorio fuente y se clonó directamente desde el
+repositorio Git local, sin hardlinks, fetch de GitHub ni branch auxiliar. La ruta lógica fue
+`%TEMP%/trazactivo-fnd005-clean-ea0e14c-<unique>/checkout`; el `HEAD` del clon coincidió exactamente
+con `ea0e14cee984d7cf2bc672d21a0233449c91803b` en
+`codex/FND-005-local-three-databases`.
+
+El estado inicial cumplió:
+
+- `git status --short` vacío;
+- ausencia de `node_modules`, `.env.local`, `.next`, `dist`, `build` y `artifacts`;
+- ningún archivo no committed del checkout fuente;
+- ningún output, path absoluto del checkout fuente o dependencia de una branch local auxiliar.
+
+Antes del clon existía únicamente el volumen canónico preservado de la validación anterior, con
+labels `trazactivo-local-fnd005`, `local-infrastructure` y `FND-005`; container y network estaban
+ausentes. Para no reutilizar datos SQL ni credenciales previas, el clon ejecutó su propio
+`local:reset` después de `npm ci` y `local:preflight`. Las guardas verificaron ownership antes de
+eliminar y recrear exclusivamente ese volumen mediante Compose. No se usó eliminación manual, prune
+ni operación Docker global.
+
+| Gate del clean checkout            | Resultado | Evidencia                                                                              |
+| ---------------------------------- | --------- | -------------------------------------------------------------------------------------- |
+| Estado inicial                     | PASS      | Árbol limpio y artefactos ausentes.                                                    |
+| `npm ci`                           | Exit 0    | 369 packages; 383 auditados; 0 vulnerabilidades; status Git todavía vacío.             |
+| `npm run local:preflight`          | Exit 0    | Context `desktop-linux`, Engine 29.6.1, puerto 14333.                                  |
+| `npm run local:reset`              | Exit 0    | Volumen previo reemplazado sólo después de validar ownership canónica.                 |
+| `npm run local:up`                 | Exit 0    | SQL Server real y las tres databases disponibles.                                      |
+| `npm run local:status`             | Exit 0    | `platform-local`, `client-a-local` y `client-b-local` resolvieron sus targets exactos. |
+| Integración `local-infrastructure` | Exit 0    | Tres DB, consultas reales, A→B/B→A/Platform→A denegados e independencia A/B.           |
+| `npm run test:architecture`        | Exit 0    | 5 archivos, 50/50.                                                                     |
+| `npm run verify`                   | Exit 0    | Unit 26/26, scopes futuros preservados y `VERIFY_COMPLETE` con estados explícitos.     |
+| `npm run local:down`               | Exit 0    | Removió container/network canónicos y preservó el volumen.                             |
+| Estado final                       | PASS      | `git status --short` vacío, `.env.local` ausente y ningún output runtime trackeado.    |
+
+Los cuatro secretos fueron distintos, conformes a `safePasswordPattern`, generados únicamente en la
+memoria del proceso del clon y descartados al finalizar; no se imprimieron ni persistieron. El reset
+demuestra que la prueba no dependió del contenido del volumen anterior ni de outputs de otra
+ejecución.
 
 ## Riesgos y limitaciones
 
@@ -238,8 +280,8 @@ hizo commit, push, PR o merge.
 ## Pendientes
 
 `BLK-FND-005-001` está `RESOLVED`. FND-005 permanece `READY`, no `DONE`, a la espera de revisión
-humana. Esta iteración no hace commit, push, PR o merge. La comprobación de checkout/clon limpio se
-reserva para la validación final posterior; el runtime principal ya está completamente verde.
+humana. El runtime principal y el clean checkout del commit candidato están completamente verdes;
+ninguna Work Package adicional queda autorizada por esta evidencia.
 
 No existe Decision Request: la imagen y el comportamiento usados no evidenciaron incompatibilidad
 semántica relevante entre SQL Server local y Azure SQL para el alcance de FND-005.
