@@ -2,13 +2,15 @@
 
 ## Estado
 
-`READY`
+`DONE`
 
 Autorizada exclusivamente para implementación por decisión humana del 2026-08-19, después de
 resolver `BLK-FND-004-001` mediante la matriz aprobada de responsabilidad, API pública mínima,
 consumidores y prohibiciones. FND-001 está `DONE`, por lo que la dependencia y el gate de entrada
-están satisfechos. FND-004 es la única Work Package en `READY`; esta transición no autoriza FND-005
-ni ninguna otra Work Package.
+están satisfechos. El cierre fue aprobado humanamente tras la implementación mediante el PR #11 y
+su merge en `architecture/v1.1-typescript` mediante
+`7a9e35aac22fff1b6c0ad36d5547875d4c45f9de`. Este cierre no autoriza FND-005 ni ninguna otra Work
+Package.
 
 ## Objetivo
 
@@ -175,18 +177,18 @@ deliberadamente mínima o vacía cuando el artefacto sea sólo un boundary verif
 
 ## Criterios de aceptación
 
-- [ ] Cada package tiene responsabilidad y API pública explícitas.
-- [ ] FND-004 no crea, recrea ni extiende `packages/design-system`; sólo valida sus límites.
-- [ ] No existe `common` genérico.
-- [ ] Domain/Policy compilan sin framework ni infraestructura.
-- [ ] Frontend no puede importar Prisma/Nest internos.
-- [ ] Architecture test falla si Prisma se obtiene sin ClientContext autorizado.
+- [x] Cada package tiene responsabilidad y API pública explícitas.
+- [x] FND-004 no crea, recrea ni extiende `packages/design-system`; sólo valida sus límites.
+- [x] No existe `common` genérico.
+- [x] Domain/Policy compilan sin framework ni infraestructura.
+- [x] Frontend no puede importar Prisma/Nest internos.
+- [x] Architecture test falla si Prisma se obtiene sin ClientContext autorizado.
 
 ## Casos negativos
 
-- [ ] Fixtures de imports prohibidos son rechazados por la suite.
-- [ ] Agregar `.csproj` o dependencia .NET falla el control.
-- [ ] Un cálculo contable sin golden aprobado falla el guard de alcance.
+- [x] Fixtures de imports prohibidos son rechazados por la suite.
+- [x] Agregar `.csproj` o dependencia .NET falla el control.
+- [x] Un cálculo contable sin golden aprobado falla el guard de alcance.
 
 ## Pruebas obligatorias
 
@@ -206,16 +208,37 @@ npm run build
 
 ## Definition of Done
 
-- [ ] Build/lint/typecheck.
-- [ ] Unit/architecture reales.
-- [ ] Golden applicability real, no placeholder.
-- [ ] Mapa de dependencias documentado.
-- [ ] Sin secretos ni reglas anticipadas.
-- [ ] Sin TBD P0 aplicable.
+- [x] Build/lint/typecheck.
+- [x] Unit/architecture reales.
+- [x] Golden applicability real, no placeholder.
+- [x] Mapa de dependencias documentado.
+- [x] Sin secretos ni reglas anticipadas.
+- [x] Sin TBD P0 aplicable.
 
 ## Evidencia esperada
 
 - Grafo de imports, resultados de fixtures negativas y estado golden `NOT_APPLICABLE_SCOPE`.
+
+## Evidencia de cierre
+
+- PR #11 implementado y mergeado en `architecture/v1.1-typescript`.
+- Merge commit integrado:
+  `7a9e35aac22fff1b6c0ad36d5547875d4c45f9de`.
+- Reporte de implementación: `docs/plans/reports/FND-004-report.md`.
+- `npm ci`: exit 0.
+- `npm run verify`: exit 0.
+- `npm run test:unit`: 26/26.
+- `npm run test:architecture`: 35/35.
+- `npm run test:golden`: `NOT_APPLICABLE_SCOPE`, owner QA-002, mediante inspección real.
+- `npm run build`: exit 0; backend-smoke de FND-003 continúa exit 0.
+- `git diff --check`: exit 0.
+- `git status`: working tree limpio post-merge.
+- El checkout limpio previo validó architecture 35/35 y `npm run verify` exit 0.
+- `packages/design-system` no fue modificado; `testkit` se consume mediante
+  `@trazactivo/testkit`; domain y policy-engine conservan pureza deny-by-default.
+- No existe Prisma, persistencia, `AssetItem`, membership, Client Resolver, OpenAPI funcional,
+  reglas contables ni cálculos. FND-005 y las WPs posteriores no fueron implementadas ni
+  autorizadas por este cierre.
 
 ## Riesgos
 

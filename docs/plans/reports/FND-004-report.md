@@ -9,8 +9,11 @@ existente conserva el ownership de FND-002 y no fue modificado.
 
 - Work Package: `FND-004-package-boundaries`.
 - Estado durante la implementación: `READY`.
+- Estado documental post-merge: `DONE`, por decisión humana de cierre.
 - Branch: `codex/FND-004-package-boundaries`.
 - Base: `architecture/v1.1-typescript`.
+- PR de implementación: #11; merge commit integrado:
+  `7a9e35aac22fff1b6c0ad36d5547875d4c45f9de`.
 - Dependencia satisfecha: FND-001 (`DONE`).
 - FND-002 y FND-003 permanecen `DONE`; FND-005 y todas las demás WPs permanecen sin autorización.
 - Bloqueo de entrada: `BLK-FND-004-001` (`RESOLVED`).
@@ -195,8 +198,8 @@ vigente y permite exports adicionales legítimos.
 | Frontend no puede importar Prisma o NestJS interno.          | Gate preexistente conservado y fixture negativa de FND-004.           |
 | Prisma no se obtiene antes de ClientContext autorizado.      | Regla de ubicación/contexto y fixtures de application/infrastructure. |
 
-Todos los criterios están implementados; su cierre documental depende de la revisión humana y no
-cambia FND-004 de `READY` a `DONE`.
+Los seis criterios están respaldados por la suite y la evidencia post-merge, y quedan cerrados por
+la decisión humana que cambia FND-004 de `READY` a `DONE`.
 
 ## Casos negativos
 
@@ -254,6 +257,23 @@ cambia FND-004 de `READY` a `DONE`.
 - Contracts no contiene OpenAPI, endpoint o DTO funcional.
 - No se modificaron PDD ni ADR Accepted.
 - No se implementó FND-005 ni ninguna WP posterior.
+
+## Cierre post-merge
+
+- PR #11 mergeado en `architecture/v1.1-typescript` mediante
+  `7a9e35aac22fff1b6c0ad36d5547875d4c45f9de`.
+- Evidencia de implementación y validación: este reporte.
+- `npm ci`: exit 0; `npm run verify`: exit 0.
+- Unit tests: 26/26; architecture tests: 35/35.
+- `test:golden`: `NOT_APPLICABLE_SCOPE`, owner QA-002, mediante inspección real.
+- Build: exit 0; el backend-smoke entregado por FND-003 continúa exit 0.
+- `git diff --check`: exit 0; working tree limpio post-merge.
+- El checkout limpio previo validó architecture 35/35 y `npm run verify` exit 0.
+- `packages/design-system` no fue modificado; `testkit` se consume mediante su API pública
+  `@trazactivo/testkit`; domain y policy-engine conservan el boundary deny-by-default.
+- `BLK-FND-004-001` permanece históricamente registrado como `RESOLVED`.
+- No existe Prisma, persistencia, `AssetItem`, membership, Client Resolver, OpenAPI funcional,
+  reglas contables ni cálculos. No se implementó ni autorizó FND-005 o una WP posterior.
 
 ## Trazabilidad
 
