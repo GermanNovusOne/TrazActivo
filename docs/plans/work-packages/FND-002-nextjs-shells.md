@@ -2,10 +2,11 @@
 
 ## Estado
 
-`READY`
+`DONE`
 
 Autorizada exclusivamente para implementación por decisión humana del 2026-08-18. Esta transición
-no autoriza ninguna otra Work Package.
+no autorizó ninguna otra Work Package. El cierre fue aprobado humanamente tras la implementación y
+merge del PR #5 en `architecture/v1.1-typescript` mediante el commit `a5707e6`.
 
 ## Objetivo
 
@@ -126,17 +127,17 @@ Ambas apps levantan y construyen independientemente, se distinguen visual y téc
 
 ## Criterios de aceptación
 
-- [ ] Portal y Control construyen y levantan por separado.
-- [ ] No existen imports entre aplicaciones.
-- [ ] No hay Prisma, connection strings ni DTO internos en frontend.
-- [ ] Tokens respetan baseline y contraste básico.
-- [ ] Los shells funcionan con teclado y axe sin defectos bloqueantes.
+- [x] Portal y Control construyen y levantan por separado.
+- [x] No existen imports entre aplicaciones.
+- [x] No hay Prisma, connection strings ni DTO internos en frontend.
+- [x] Tokens respetan baseline y contraste básico.
+- [x] Los shells funcionan con teclado y axe sin defectos bloqueantes.
 
 ## Casos negativos
 
-- [ ] Un import desde backend/Prisma falla architecture test.
-- [ ] Control Plane no aparece como navegación del portal.
-- [ ] Un error no expone stack ni configuración sensible.
+- [x] Un import desde backend/Prisma falla architecture test.
+- [x] Control Plane no aparece como navegación del portal.
+- [x] Un error no expone stack ni configuración sensible.
 
 ## Pruebas obligatorias
 
@@ -159,16 +160,33 @@ npm run dev --workspace control-web
 
 ## Definition of Done
 
-- [ ] Build, lint y typecheck.
-- [ ] Component/architecture/a11y.
-- [ ] Separación de apps documentada.
-- [ ] Sin API ad hoc, Prisma, secretos o lógica anticipada.
-- [ ] Evidencia visual y de teclado.
-- [ ] Sin TBD P0 aplicable.
+- [x] Build, lint y typecheck.
+- [x] Component/architecture/a11y.
+- [x] Separación de apps documentada.
+- [x] Sin API ad hoc, Prisma, secretos o lógica anticipada.
+- [x] Evidencia visual y de teclado.
+- [x] Sin TBD P0 aplicable.
 
 ## Evidencia esperada
 
 - Builds, screenshots de shells, reporte axe y matriz de imports.
+
+## Evidencia de cierre
+
+- PR #5 implementado y mergeado en `architecture/v1.1-typescript`.
+- Merge commit integrado: `a5707e6`.
+- Reporte de implementación: `docs/plans/reports/FND-002-report.md`.
+- `npm ci`: exit 0.
+- `npm run verify`: exit 0, con resultado
+  `VERIFY_COMPLETE result=CONTROLS_EXECUTED_WITH_EXPLICIT_SCOPE_STATUSES`.
+- `npm run test:unit`: 12/12.
+- `npm run test:architecture`: 14/14.
+- `npm run test:a11y`: 5/5, sin infracciones axe.
+- Builds independientes de `portal-web`, `control-web` y `design-system`: exit 0.
+- `git diff --check`: exit 0.
+- `git status`: working tree limpio post-merge.
+- El formatter ignora `.next` y `next-env.d.ts`; `next-env.d.ts` no está trackeado.
+- FND-003, FND-004 y FND-005 no fueron implementadas, permanecen `DRAFT` y no están autorizadas.
 
 ## Riesgos
 
