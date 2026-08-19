@@ -2,7 +2,13 @@
 
 ## Estado
 
-`DRAFT`
+`READY`
+
+Autorizada exclusivamente para implementación por decisión humana del 2026-08-19, después de
+resolver `BLK-FND-004-001` mediante la matriz aprobada de responsabilidad, API pública mínima,
+consumidores y prohibiciones. FND-001 está `DONE`, por lo que la dependencia y el gate de entrada
+están satisfechos. FND-004 es la única Work Package en `READY`; esta transición no autoriza FND-005
+ni ninguna otra Work Package.
 
 ## Objetivo
 
@@ -27,7 +33,7 @@ Packages construibles con responsabilidades explícitas y una suite que falla an
 
 ## Gate de entrada
 
-- FND-001 completada.
+- FND-001 completada (`DONE`); gate de entrada satisfecho.
 
 ## Gate de salida
 
@@ -40,8 +46,8 @@ Packages construibles con responsabilidades explícitas y una suite que falla an
 - Creación inicial de `domain`, `client-context`, `authorization`, `contracts`, `observability` y
   `testkit` mínimos.
 - Boundary de `policy-engine` sin reglas publicadas ni cálculos.
-- Validación de límites arquitectónicos de `packages/design-system` ya creado por FND-002 y consumo
-  o extensión de interfaces existentes únicamente cuando el scope de FND-004 lo requiera.
+- Validación de límites arquitectónicos de `packages/design-system` ya creado por FND-002, sin
+  modificarlo ni extenderlo.
 - Tests de imports, framework independence y stack prohibido.
 
 ### No incluye
@@ -53,13 +59,14 @@ Packages construibles con responsabilidades explícitas y una suite que falla an
 
 ## Dependencias
 
-- FND-001.
+- FND-001 (`DONE`; satisfecha).
 
 ## Precondiciones
 
-- Responsabilidad y consumidores de cada package documentados.
-- La ausencia de `packages/design-system` no autoriza a FND-004 a crearlo; su creación inicial
-  pertenece exclusivamente a FND-002.
+- Responsabilidad, API pública mínima, consumidores y prohibiciones de cada package documentados en
+  la matriz aprobada; precondición satisfecha.
+- `packages/design-system` existe y su creación inicial pertenece exclusivamente a FND-002; FND-004
+  sólo valida sus límites existentes.
 
 ## Supuestos
 
@@ -68,6 +75,43 @@ Packages construibles con responsabilidades explícitas y una suite que falla an
 ## Bloqueos/TBD
 
 - TBD contables no bloquean crear el límite vacío de Policy Engine; sí bloquean cualquier regla/cálculo.
+- `BLK-FND-004-001` — `RESOLVED` por decisión humana del 2026-08-19. Hallazgo original preservado:
+  faltaba una matriz aprobada que asignara a cada package bajo ownership de FND-004 su
+  responsabilidad concreta, API pública mínima y consumidor inmediato; el plan sólo permitía
+  identificar consumidores futuros generales y `testkit` no tenía responsabilidad específica
+  documentada. El impacto original mantenía FND-004 `DRAFT` para impedir abstracciones sin
+  consumidor. La decisión humana definió que un consumidor inmediato puede ser una WP del Walking
+  Skeleton explícitamente identificada o la propia suite architecture/golden cuando el artefacto
+  es exclusivamente boundary, guard o soporte de testing. La matriz aprobada siguiente satisface
+  la evidencia requerida sin anticipar la implementación de las WPs consumidoras.
+
+## Matriz aprobada de packages
+
+La decisión humana del 2026-08-19 no autoriza comportamiento funcional futuro. Una API puede ser
+deliberadamente mínima o vacía cuando el artefacto sea sólo un boundary verificable.
+
+| Package | Responsabilidad | API pública mínima | Consumidor identificado | Prohibiciones |
+|---|---|---|---|---|
+| `packages/domain` | Boundary TypeScript puro de dominio | Sólo la superficie necesaria para independencia de framework; FND-004 no crea tipos funcionales de `AssetItem` | AST-001 | `AssetItem` funcional, invariantes, value objects de negocio, persistencia, NestJS, Prisma, HTTP, Azure y contabilidad |
+| `packages/client-context` | Boundary TypeScript puro para tipos mínimos de contexto e inmutabilidad | Sólo tipos/boundaries que impidan secretos, connection strings y dependencia de framework | CLI-003 | Membership, resolver, context factory funcional, switch, identidad y selección de DB |
+| `packages/authorization` | Contratos y puertos mínimos framework-agnostic | Sólo interfaces/boundaries sin policies funcionales | CLI-003; posteriormente APP-001 | Roles efectivos, permisos funcionales, autorización real y decisiones de UI |
+| `packages/contracts` | Boundary para contratos públicos o generados | Superficie mínima para que API-001 establezca contratos sin compartir DTO internos | API-001 | OpenAPI funcional anticipado, DTO NestJS manual compartido y endpoints de negocio |
+| `packages/observability` | Boundary vendor-neutral de observabilidad | Tipos o puertos técnicos mínimos, como `CorrelationId`, sólo cuando el boundary los justifique | OBS-001 | Application Insights, Azure Monitor, SDK Azure, logging productivo y métricas productivas |
+| `packages/testkit` | Helpers, fixtures y assertions sólo para testing | Únicamente utilidades consumidas realmente por las pruebas de FND-004 | Suites reales architecture/alcance de FND-004; posteriormente OBS-001 y WPs QA cuando sean autorizadas | Código runtime, package `common` genérico y abstracciones sin uso real |
+| `packages/policy-engine` | Sólo boundary y guard de alcance | Vacía o limitada al marcador/boundary mínimo requerido por architecture/golden applicability | Suites architecture/golden de FND-004; ningún consumidor funcional autorizado | Reglas, policies funcionales, cálculos, lógica contable y motores de decisión |
+| `packages/design-system` | Límite existente bajo ownership de FND-002 | Ninguna API nueva en FND-004; se valida la API pública existente | `portal-web` y `control-web` ya entregados; FND-004 sólo valida el límite | Crear, recrear, extender o tomar ownership del package o de sus design tokens |
+
+### Evidencia de resolución
+
+- AST-001 declara `packages/domain` como componente afectado y depende de FND-004.
+- CLI-003 declara `client-context` y `authorization` como packages consumidores.
+- APP-001 consume posteriormente authorization y confirma que Policy Engine no participa.
+- API-001 declara `package contracts` como componente afectado sin compartir DTO internos.
+- OBS-001 declara `package observability` y `testkit` como componentes afectados, sin SDK Azure.
+- Las suites architecture/golden de FND-004 consumen inmediatamente `testkit` y el boundary/guard
+  de `policy-engine`.
+- `packages/design-system` ya existe por FND-002; FND-004 no lo crea, recrea, extiende ni toma en
+  ownership.
 
 ## Diseño
 
@@ -75,8 +119,7 @@ Packages construibles con responsabilidades explícitas y una suite que falla an
 
 - `packages/domain`, `packages/client-context`, `packages/authorization`, `packages/contracts`,
   `packages/observability`, `packages/testkit`, el boundary de `packages/policy-engine` y la suite de
-  arquitectura. `packages/design-system` sólo participa como límite existente sujeto a validación o
-  a extensión acotada de interfaces cuando corresponda.
+  arquitectura. `packages/design-system` sólo participa como límite existente sujeto a validación.
 
 ### Cambios esperados
 
@@ -84,8 +127,8 @@ Packages construibles con responsabilidades explícitas y una suite que falla an
 
 ### Frontend
 
-- Sólo contracts y las interfaces existentes de design-system están autorizados; nunca domain
-  interno, Nest DTO o Prisma. Esta autorización de consumo no transfiere ownership a FND-004.
+- El boundary de contracts prepara la separación futura; nunca expone domain interno, Nest DTO o
+  Prisma. FND-004 sólo valida los límites existentes de design-system y no modifica su API.
 
 ### API/OpenAPI
 
@@ -133,8 +176,7 @@ Packages construibles con responsabilidades explícitas y una suite que falla an
 ## Criterios de aceptación
 
 - [ ] Cada package tiene responsabilidad y API pública explícitas.
-- [ ] FND-004 no crea ni recrea `packages/design-system`; sólo valida sus límites o extiende
-  interfaces existentes cuando su scope lo exige.
+- [ ] FND-004 no crea, recrea ni extiende `packages/design-system`; sólo valida sus límites.
 - [ ] No existe `common` genérico.
 - [ ] Domain/Policy compilan sin framework ni infraestructura.
 - [ ] Frontend no puede importar Prisma/Nest internos.
@@ -188,5 +230,7 @@ npm run build
 
 ## Condiciones de bloqueo
 
-- Responsabilidad de un package no definida.
-- Propuesta de regla contable o acceso Prisma fuera de límites.
+- `BLK-FND-004-001` está resuelto por la matriz aprobada; una responsabilidad, API o consumidor que
+  se aparte de ella vuelve a bloquear la parte afectada.
+- Una propuesta de regla contable o acceso Prisma fuera de los límites futuros autorizados vuelve a
+  bloquear FND-004; ninguna está autorizada por esta transición.

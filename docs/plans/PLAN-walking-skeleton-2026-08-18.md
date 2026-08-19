@@ -6,9 +6,10 @@
 
 La transición de este plan y de cualquiera de sus Work Packages a `READY` requiere revisión humana
 de Germán/Eduardo y el cierre de los bloqueos aplicables. BAS-001, FND-001, FND-002 y FND-003 están
-`DONE` por decisiones humanas aprobadas. FND-004, FND-005 y todas las demás Work Packages
-permanecen `DRAFT` y no están autorizadas para implementación. No existe ninguna Work Package en
-`READY` ni una autorización adicional vigente.
+`DONE` por decisiones humanas aprobadas. FND-004 es la única Work Package en `READY`, autorizada
+por decisión humana después de resolver `BLK-FND-004-001` mediante la matriz aprobada de packages.
+FND-005 y todas las demás Work Packages permanecen `DRAFT` y no están autorizadas para
+implementación.
 
 ## 1. Decisión o resultado buscado
 
@@ -146,14 +147,15 @@ La rama observada al elaborar el plan fue `planning/walking-skeleton-v1.1`. BAS-
 | Finalizada | FND-001 | `DONE`; PR #1 mergeado en `architecture/v1.1-typescript` y reporte `docs/plans/reports/FND-001-report.md` como evidencia de cierre |
 | Finalizada | FND-002 | `DONE`; PR #5 mergeado mediante `a5707e6` y reporte `docs/plans/reports/FND-002-report.md` como evidencia de cierre |
 | Finalizada | FND-003 | `DONE`; PR #8 mergeado mediante `860910a` y reporte `docs/plans/reports/FND-003-report.md` como evidencia de cierre |
+| Autorizada | FND-004 | `READY`; FND-001 `DONE` y `BLK-FND-004-001` resuelto por decisión humana y matriz aprobada de packages |
 | Bloqueo directo futuro | CLI-003 | `DR-WS-IDENTITY-001`; sólo identidad controlada local/test, sin decidir identidad definitiva, MFA ni Gate 4 |
 | Bloqueo directo futuro | CLI-004 | `DR-WS-DS-001`, que sólo puede resolverse con evidencia de SPI-001 |
 | No bloquea el skeleton local | TBD-PROD-001 | Afecta el alcance final del MVP comercial, no Gate 0 ni foundation |
 | No bloquea CLI-004 | TBD-DATA-002 | Conserva su bloqueo autoritativo sobre la prueba de carga; no se declara cerrado |
 
-En el snapshot actual, FND-001, FND-002 y FND-003 están finalizadas. No existe ninguna WP en
-`READY`. FND-004, FND-005 y todas las demás WPs permanecen `DRAFT` y no están autorizadas. Ninguna
-otra WP puede pasar a `READY` sólo por despejar dependencias: todas requieren revisión humana de
+En el snapshot actual, FND-001, FND-002 y FND-003 están finalizadas, y FND-004 es la única WP en
+`READY`. FND-005 y todas las demás WPs permanecen `DRAFT` y no están autorizadas. Ninguna otra WP
+puede pasar a `READY` sólo por despejar dependencias: todas requieren revisión humana de
 Germán/Eduardo; la ejecución vuelve a detenerse en CLI-003 y CLI-004 si sus DR respectivos siguen
 abiertos.
 
@@ -333,8 +335,9 @@ El cierre documental de FND-003 queda respaldado por el PR #8, el merge commit `
 exit 0, `npm run verify` exit 0 con `build` antes de `test:backend-smoke`, unit 24/24, architecture
 24/24, builds independientes exitosos de Data API, Control API y worker, health HTTP 200 en ambas
 APIs, runtime idle correcto del worker, shutdown sin handles abiertos, `git diff --check` exit 0 y
-working tree limpio. No se implementó ni autorizó FND-004, FND-005 ni ninguna WP posterior; no
-queda ninguna WP en `READY`.
+working tree limpio. Al momento de ese cierre, no se había implementado ni autorizado FND-004,
+FND-005 ni ninguna WP posterior, y no quedaba ninguna WP en `READY`. La autorización posterior de
+FND-004 se registra separadamente en su Work Package y en el estado vigente de este plan.
 
 - bootstrap desde clon limpio documentado;
 - OpenAPI Control/Data y diff del cliente generado;
@@ -391,8 +394,9 @@ Gate 0 / BAS-001 [precondición satisfecha externamente]
 
 ### Paralelización recomendada
 
-- FND-001, FND-002 y FND-003 están `DONE`. Ninguna WP está en `READY`; FND-004 y FND-005
-  permanecen `DRAFT` y sólo podrán avanzar tras autorización humana explícita.
+- FND-001, FND-002 y FND-003 están `DONE`; FND-004 es la única WP en `READY` tras resolver
+  `BLK-FND-004-001`. FND-005 permanece `DRAFT` y sólo podrá avanzar tras autorización humana
+  explícita.
 - En Wave 1: API-001 puede avanzar tras FND-003; DB-001 y DB-002 pueden avanzar en paralelo después de FND-003/FND-005; DB-003 espera a ambos schemas.
 - AST-001 puede adelantarse una vez cerrado FND-004, en paralelo con la frontera Client; AST-002 espera CLI-004/CLI-005 y DB-002.
 - En Wave 4: API-002, AUD-001 y OBS-001 pueden avanzar en paralelo después de AST-003; UX-001 empieza cuando se satisfacen sus dependencias. En Wave 5, QA-001 consolida backend/contrato y QA-002 realiza la aceptación final.
@@ -402,7 +406,7 @@ Gate 0 / BAS-001 [precondición satisfecha externamente]
 
 El plan se considera completado, no implementado, cuando todos sus WP existen y tienen
 trazabilidad, dependencias, pruebas y bloqueos explícitos. En el estado actual, BAS-001, FND-001,
-FND-002 y FND-003 están `DONE`. Ninguna WP está en `READY`; FND-004, FND-005 y todas las demás WPs
+FND-002 y FND-003 están `DONE`. FND-004 es la única WP en `READY`; FND-005 y todas las demás WPs
 permanecen `DRAFT` y no están autorizadas. El Walking Skeleton sólo se considera implementado y
 aprobado localmente cuando:
 
