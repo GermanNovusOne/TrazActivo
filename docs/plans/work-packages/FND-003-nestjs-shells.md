@@ -2,11 +2,12 @@
 
 ## Estado
 
-`READY`
+`DONE`
 
 Autorizada exclusivamente para implementación por decisión humana del 2026-08-19. FND-001 está
 `DONE`, por lo que la dependencia y el gate de entrada están satisfechos. Esta transición no
-autoriza ninguna otra Work Package.
+autorizó ninguna otra Work Package. El cierre fue aprobado humanamente tras la implementación y
+merge del PR #8 en `architecture/v1.1-typescript` mediante el commit `860910a`.
 
 ## Objetivo
 
@@ -122,17 +123,17 @@ Las tres aplicaciones levantan y construyen por separado, exponen health mínimo
 
 ## Criterios de aceptación
 
-- [ ] Las tres apps construyen y levantan de forma independiente.
-- [ ] `data-api` y `control-api` no mezclan módulos ni permisos.
-- [ ] Worker no procesa mensajes sin envelope/contexto.
-- [ ] Controllers no contienen invariantes.
-- [ ] Shutdown no deja procesos abiertos.
+- [x] Las tres apps construyen y levantan de forma independiente.
+- [x] `data-api` y `control-api` no mezclan módulos ni permisos.
+- [x] Worker no procesa mensajes sin envelope/contexto.
+- [x] Controllers no contienen invariantes.
+- [x] Shutdown no deja procesos abiertos.
 
 ## Casos negativos
 
-- [ ] Un import entre apps falla architecture test.
-- [ ] Un secreto/config completa no aparece en health/logs.
-- [ ] El health no intenta abrir Prisma Client DB.
+- [x] Un import entre apps falla architecture test.
+- [x] Un secreto/config completa no aparece en health/logs.
+- [x] El health no intenta abrir Prisma Client DB.
 
 ## Pruebas obligatorias
 
@@ -155,16 +156,35 @@ npm run dev --workspace worker
 
 ## Definition of Done
 
-- [ ] Build/lint/typecheck.
-- [ ] Unit/architecture.
-- [ ] Health y shutdown verificados.
-- [ ] Límites de apps documentados.
-- [ ] Sin Prisma, secretos o funcionalidad anticipada.
-- [ ] Sin TBD P0 aplicable.
+- [x] Build/lint/typecheck.
+- [x] Unit/architecture.
+- [x] Health y shutdown verificados.
+- [x] Límites de apps documentados.
+- [x] Sin Prisma, secretos o funcionalidad anticipada.
+- [x] Sin TBD P0 aplicable.
 
 ## Evidencia esperada
 
 - Logs sanitizados de startup/health/shutdown y matriz de dependencias.
+
+## Evidencia de cierre
+
+- PR #8 implementado y mergeado en `architecture/v1.1-typescript`.
+- Merge commit integrado: `860910a`.
+- Reporte de implementación: `docs/plans/reports/FND-003-report.md`.
+- `npm ci`: exit 0.
+- `npm run verify`: exit 0; ejecutó `VERIFY_RUNNING step=build` y posteriormente
+  `VERIFY_RUNNING step=test:backend-smoke`, y terminó con
+  `VERIFY_COMPLETE result=CONTROLS_EXECUTED_WITH_EXPLICIT_SCOPE_STATUSES`.
+- `npm run test:unit`: 24/24.
+- `npm run test:architecture`: 24/24.
+- Builds independientes de `data-api`, `control-api` y `worker`: exit 0.
+- Backend smoke integrado al contrato raíz de `verify`: Data API y Control API respondieron HTTP
+  200; el worker mantuvo correctamente su runtime idle; los tres shutdown liberaron sus handles.
+- `git diff --check`: exit 0.
+- `git status`: working tree limpio post-merge.
+- No se implementó FND-004, FND-005 ni ninguna Work Package posterior; ninguna queda autorizada
+  por este cierre.
 
 ## Riesgos
 
@@ -177,5 +197,6 @@ npm run dev --workspace worker
 
 ## Condiciones de bloqueo
 
-- FND-001 no completada.
-- Diseño que mezcle Control/Data Plane.
+- FND-001 está completada y no constituye un bloqueo vigente.
+- No quedan condiciones de bloqueo aplicables al cierre de FND-003; no se mezclaron Control Plane
+  y Data Plane.
