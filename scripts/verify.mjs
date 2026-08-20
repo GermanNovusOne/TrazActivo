@@ -2,6 +2,8 @@ import { run, runNpm } from "./toolchain.mjs";
 
 const requiredScripts = [
   "preflight",
+  "db:platform:generate",
+  "db:platform:validate",
   "format:check",
   "lint",
   "typecheck",

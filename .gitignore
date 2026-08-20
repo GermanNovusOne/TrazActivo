@@ -30,6 +30,7 @@ out/
 node_modules/
 coverage/
 artifacts/
+database/platform/generated/client/
 
 # Local logs and temporary files
 *.log
