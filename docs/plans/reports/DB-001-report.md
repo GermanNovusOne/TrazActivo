@@ -163,6 +163,44 @@ exclusivamente `local:reset`, que removió recursos del proyecto canónico y rec
 nuevo. La repetición pasó `local:reset`, `local:up`, `local:status`, ambas integraciones, build,
 `verify` y `local:down`. No se usó prune ni eliminación global.
 
+## Clean checkout
+
+El commit candidato `d9c86d738850ed104b1286b7cb97128124e2a231` se clonó desde el repositorio
+local, sin hardlinks, en un directorio nuevo lógico `C:\Temp\TrazActivo-db001-clean-<uuid>`. El
+checkout inicial tenía working tree limpio y no contenía `node_modules`, `.env.local`, generated
+client, `dist`, `build` ni `artifacts`.
+
+El primer checkout candidato previo detectó correctamente una falta de política LF para
+`database/**`: Git materializaba CRLF en Windows y `format:check` fallaba. Se agregó la política
+explícita por extensión a `.gitattributes` y una regresión architecture que la exige. El candidato
+final comenzó con los atributos `text eol=lf` observados para Markdown, Prisma y TypeScript bajo
+`database/`.
+
+La validación final del clean checkout ejecutó:
+
+```text
+npm ci
+npm run local:reset
+npm run db:platform:generate
+npm run db:platform:validate
+npm run test:integration -- --project platform-prisma-foundation
+npm run test:architecture
+npm run verify
+npm run local:down
+```
+
+Resultado: PASS. `npm ci` instaló desde lockfile sin output previo; generate/validate reprodujeron el
+mismo hash; Prisma observó `platform_catalog`, rechazó A/B y desconectó; architecture fue 63/63;
+`verify` terminó con `VERIFY_COMPLETE result=CONTROLS_EXECUTED_WITH_EXPLICIT_SCOPE_STATUSES`.
+Después de `local:down`, `git status --short` permaneció vacío, el generated client tuvo cero
+archivos trackeados y `.env.local` siguió ausente.
+
+Antes del checkout existía un volumen Docker canónico preservado por la pasada principal. No se
+reutilizaron sus credenciales o datos: el clon ejecutó `local:reset` después de que los guards
+verificaron las labels FND-005, reconstruyó el volumen con secretos nuevos sólo en memoria y terminó
+en `local:down`. No dependió de archivos del checkout fuente, paths absolutos fuente, branches
+auxiliares, `node_modules`, `.env.local` ni outputs previos.
+
 ## Archivos creados o modificados
 
 - `.gitattributes`.
@@ -202,8 +240,7 @@ DB-001 continúa `READY`; su acreditación y transición a `DONE` requieren cier
 - El schema no crea tablas: migration history y ejecución pertenecen a DB-003.
 - Los modelos de catálogo y su semántica pertenecen a CLI-001; identidad sigue sin resolverse aquí.
 - Client Prisma, pooling/cache y ClientDataSourceManager permanecen fuera de alcance.
-- La validación desde clean checkout del commit candidato se registra en este reporte antes de
-  publicar la branch.
+- Clean checkout del commit candidato: PASS; no quedan gates de reproducibilidad pendientes.
 
 ## Comandos no ejecutados por alcance
 
