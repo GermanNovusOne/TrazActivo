@@ -8,10 +8,14 @@ Prisma Client interno generado, guardas fail-closed del target Platform, consult
 comportamiento funcional.
 
 - Work Package: `DB-001-platform-prisma-foundation`.
-- Estado de entrada y salida de implementación: `READY`; el cierre como `DONE` requiere decisión
-  humana posterior.
+- Estado de entrada de implementación: `READY`.
+- Estado final: `DONE` por decisión humana de cierre del 2026-08-20.
 - Branch: `codex/DB-001-platform-prisma-foundation`.
 - Base: `architecture/v1.1-typescript`.
+- PR: #17 — `DB-001: add Platform Prisma foundation`.
+- Merge commit real: `af05a0f0101a9a562484e2ca899b9645d16cefab`.
+- Head implementado: `b087f736751fc4d931ed2a543488fdb8f1e09d4c`.
+- Commit principal validado en clean checkout: `d9c86d738850ed104b1286b7cb97128124e2a231`.
 - Dependencias satisfechas: FND-003 y FND-005 (`DONE`).
 - DB-002, DB-003, CLI-001 y todas las demás Work Packages permanecen `DRAFT` y no autorizadas.
 
@@ -226,21 +230,55 @@ auxiliares, `node_modules`, `.env.local` ni outputs previos.
 
 ## Criterios y Definition of Done
 
-La implementación presenta evidencia para los 8 criterios de aceptación, los 7 casos negativos y
-los 8 elementos de Definition of Done de DB-001. Permanecen sin marcar en la Work Package porque
-DB-001 continúa `READY`; su acreditación y transición a `DONE` requieren cierre humano posterior.
+La decisión humana del 2026-08-20 acredita, a partir del reporte de implementación y la validación
+post-merge aprobada, los 8/8 criterios de aceptación, los 7/7 casos negativos y los 8/8 elementos de
+Definition of Done. DB-001 queda `DONE` sin ampliar su alcance ni autorizar otra Work Package.
 
-## Riesgos, limitaciones y pendientes
+## Validación post-merge y cierre
 
-- Riesgo abierto de auditoría transitive `deepmerge-ts` descrito arriba. Requiere actualización a
-  una release estable compatible cuando Prisma publique una resolución soportada.
+PR #17 fue mergeado en `architecture/v1.1-typescript` mediante el commit real
+`af05a0f0101a9a562484e2ca899b9645d16cefab`; su head implementado fue
+`b087f736751fc4d931ed2a543488fdb8f1e09d4c`.
+
+La validación humana post-merge aprobada registró:
+
+- `npm ci`: PASS.
+- `local:reset`: PASS.
+- `db:platform:generate`: PASS con el hash determinista documentado.
+- `db:platform:validate`: PASS.
+- unit DB-001: 9/9; unit total: 35/35.
+- integration `platform-prisma-foundation`: PASS real, con `DB_NAME() = platform_catalog`, targets A/B
+  rechazados antes de Prisma y lifecycle connect/disconnect PASS.
+- architecture: 63/63.
+- a11y de superficies implementadas: 5/5.
+- build y backend-smoke: PASS.
+- `npm run verify`: exit 0 y
+  `VERIFY_COMPLETE result=CONTROLS_EXECUTED_WITH_EXPLICIT_SCOPE_STATUSES`.
+- `local:down`: `LOCAL_DOWN_OK data=preserved`.
+- `git diff --check`: exit 0; working tree post-merge limpio y branch integrada sincronizada con
+  origin.
+
+Contract, multiclient, future application integration y e2e conservan
+`NOT_IMPLEMENTED_SCOPE`; golden conserva `NOT_APPLICABLE_SCOPE`. Ninguno se declara implementado.
+DB-002 conserva Client Prisma, DB-003 migrations/seeds y CLI-001 el Client Catalog funcional; todas
+ellas, junto con las demás WPs futuras, permanecen `DRAFT` y no autorizadas.
+
+## Riesgos abiertos no bloqueantes, limitaciones y pendientes
+
+- Riesgo abierto de auditoría transitiva `deepmerge-ts` descrito arriba. Requiere actualización a
+  una release estable compatible cuando Prisma publique una resolución soportada. No se declara
+  resuelto ni bloquea este cierre local: Prisma CLI es tooling de desarrollo, config/schema
+  arbitrarios se rechazan y no existe una corrección estable compatible aprobada en la baseline.
 - Node.js emite una advertencia de deprecación TLS al usar la IP loopback canónica como server name;
   la conexión cifrada local con certificado confiado por FND-005 funciona. No se cambió la topología
-  autorizada y debe reevaluarse antes de endurecer TLS productivo.
+  autorizada; el riesgo permanece abierto, no bloquea el cierre local y debe reevaluarse antes de
+  endurecer TLS productivo.
 - El schema no crea tablas: migration history y ejecución pertenecen a DB-003.
 - Los modelos de catálogo y su semántica pertenecen a CLI-001; identidad sigue sin resolverse aquí.
 - Client Prisma, pooling/cache y ClientDataSourceManager permanecen fuera de alcance.
 - Clean checkout del commit candidato: PASS; no quedan gates de reproducibilidad pendientes.
+- `DR-WS-IDENTITY-001` permanece abierto y no fue resuelto por DB-001.
+- Cantidad final de WPs en `READY`: cero; ninguna WP futura fue autorizada por este cierre.
 
 ## Comandos no ejecutados por alcance
 
