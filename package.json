@@ -38,6 +38,8 @@
     "local:down": "node scripts/local-down.mjs",
     "db:platform:generate": "node scripts/db-001-cli.mjs generate",
     "db:platform:validate": "node scripts/db-001-cli.mjs validate",
+    "db:client:generate": "node scripts/db-002-cli.mjs generate",
+    "db:client:validate": "node scripts/db-002-cli.mjs validate",
     "db:generate": "node scripts/not-implemented.mjs db:generate DB-001,DB-002",
     "db:migrate:local": "node scripts/not-implemented.mjs db:migrate:local DB-003",
     "db:seed:local": "node scripts/not-implemented.mjs db:seed:local DB-003",

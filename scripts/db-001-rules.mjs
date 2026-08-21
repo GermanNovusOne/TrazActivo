@@ -137,9 +137,6 @@ export function authoredImportViolations(files) {
 export function scopePathViolations(paths) {
   const violations = [];
   for (const path of paths.map((value) => value.replaceAll("\\", "/"))) {
-    if (path.startsWith("database/client/")) {
-      violations.push(`DB001_CLIENT_PRISMA_SCOPE_PROHIBITED ${path}`);
-    }
     if (/(?:^|\/)migrations(?:\/|$)/u.test(path)) {
       violations.push(`DB001_MIGRATION_SCOPE_PROHIBITED ${path}`);
     }
@@ -234,10 +231,6 @@ export async function validateStaticDb001(root = repositoryRoot) {
   if (existsSync(resolve(root, "database/platform/prisma/migrations"))) {
     violations.push("DB001_MIGRATION_DIRECTORY_PROHIBITED");
   }
-  if (existsSync(resolve(root, "database/client"))) {
-    violations.push("DB001_CLIENT_PRISMA_DIRECTORY_PROHIBITED");
-  }
-
   try {
     const trackedGenerated = execFileSync("git", ["ls-files", "--", platformGeneratedPath], {
       cwd: root,
