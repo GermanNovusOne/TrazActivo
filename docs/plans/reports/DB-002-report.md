@@ -166,7 +166,47 @@ worker mantuvo runtime idle con shutdown liberado. El resultado final fue:
 VERIFY_COMPLETE result=CONTROLS_EXECUTED_WITH_EXPLICIT_SCOPE_STATUSES
 ```
 
-El clean checkout y SHA candidato se registrarán en este mismo reporte antes de publicar el Draft PR.
+## Clean checkout
+
+El commit candidato `e7098a083c19f10ce5e6b102c497d93683a799fb` se clonó desde el repositorio
+local, sin hardlinks, en un directorio nuevo bajo el temp del sistema con nombre lógico
+`TrazActivo-db002-clean-<uuid>`. No se hizo fetch de código no publicado ni se reutilizó un checkout
+anterior.
+
+El clon inicial tenía working tree limpio y no contenía:
+
+- `node_modules`;
+- `.env.local`;
+- `database/client/generated/client`;
+- `dist`;
+- `build`;
+- `artifacts`.
+
+La validación creó cuatro secretos distintos exclusivamente en memoria, ejecutó el reset FND-005
+canónico para no reutilizar credenciales/datos del volumen preservado y corrió:
+
+```text
+npm ci
+npm run local:reset
+npm run db:client:generate
+npm run db:client:validate
+npm run test:unit -- --project client-prisma-foundation
+npm run test:architecture
+npm run verify
+npm run local:down
+```
+
+Resultado: PASS. Generate produjo nuevamente
+`aad12b466d145cf42466e9c84118ea82b4646fad9386b3c0b4f8668e9791ebbf`; unit DB-002 fue 20/20,
+architecture 88/88 y `verify` terminó con
+`VERIFY_COMPLETE result=CONTROLS_EXECUTED_WITH_EXPLICIT_SCOPE_STATUSES`. Las integraciones reales
+FND-005/DB-001 y los scopes futuros se conservaron. `local:down` terminó exit 0 con datos preservados.
+
+El estado Git final permaneció limpio, el generated Client tuvo cero archivos trackeados y
+`.env.local` siguió ausente. El clon no dependió de archivos no committed, paths fuente absolutos,
+branches auxiliares, dependencias, generated output o configuración persistida del checkout fuente.
+El volumen canónico previo no se tomó como evidencia reproducible: `local:reset` verificó ownership y
+labels y reconstruyó el estado con los secretos efímeros del clon.
 
 ## Riesgos abiertos y limitaciones
 
@@ -201,8 +241,8 @@ El clean checkout y SHA candidato se registrarán en este mismo reporte antes de
 
 ## Commits y clean checkout
 
-- Commit candidato: pendiente de validación principal completa.
-- Clean checkout: pendiente.
+- Commit candidato validado: `e7098a083c19f10ce5e6b102c497d93683a799fb`.
+- Clean checkout: PASS.
 - Draft PR: pendiente.
 
 ## Comandos no ejecutados por alcance
