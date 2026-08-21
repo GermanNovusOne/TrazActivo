@@ -242,8 +242,10 @@ labels y reconstruyó el estado con los secretos efímeros del clon.
 ## Commits y clean checkout
 
 - Commit candidato validado: `e7098a083c19f10ce5e6b102c497d93683a799fb`.
+- Commit de evidencia clean checkout: `f7c0117`.
 - Clean checkout: PASS.
-- Draft PR: pendiente.
+- Draft PR: #20 — `DB-002: add Client Prisma foundation`, hacia
+  `architecture/v1.1-typescript`.
 
 ## Comandos no ejecutados por alcance
 
