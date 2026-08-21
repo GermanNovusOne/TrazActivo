@@ -2,7 +2,7 @@
 
 ## Estado
 
-`READY`
+`DONE`
 
 ## Autorización
 
@@ -11,6 +11,16 @@
 - Dependencias de entrada satisfechas: FND-003 `DONE` y FND-005 `DONE`.
 - DB-001 `DONE` aporta la baseline técnica Prisma existente, pero no se agrega como dependencia formal de entrada ni se acoplan los clientes generados Platform y Client.
 - La autorización permite implementar y validar DB-002; no acredita todavía criterios de aceptación ni Definition of Done.
+
+## Cierre documental
+
+- Decisión humana de cierre: 2026-08-21.
+- Implementación: PR #20 — `DB-002: add Client Prisma foundation`.
+- Merge en `architecture/v1.1-typescript`: `08e5d947f39f8c3a8beedc2ec8b45cb438957b16`.
+- Head implementado: `757224c76930f340e6d4f02c9fbbac46b354b00d`.
+- Commit candidato validado en clean checkout: `e7098a083c19f10ce5e6b102c497d93683a799fb`.
+- Evidencia: `docs/plans/reports/DB-002-report.md`, clean checkout PASS y validación post-merge aprobada.
+- Este cierre no autoriza DB-003, API-001, AST-001, CLI-001 ni ninguna otra Work Package.
 
 ## Objetivo
 
@@ -182,24 +192,24 @@ DB-002 no crea un directorio `migrations`, no produce una migration base y no ej
 
 ## Criterios de aceptación
 
-- [ ] El schema Client model-free genera y valida de forma determinista desde los paths canónicos.
-- [ ] El output generado Client es interno, reproducible, ignorado y distinto del output Platform.
-- [ ] El schema contiene cero modelos Platform, Client funcionales, AssetItem o contables y no usa preview features.
-- [ ] Prisma 7.9.1 se reutiliza con versiones exactas y coincidentes entre CLI, client y adapter.
-- [ ] Las tuples administrativas A y B son aceptadas de forma independiente y cualquier mezcla entre ellas falla cerrada.
-- [ ] Platform y targets/configuración arbitrarios se rechazan antes de cualquier adquisición Prisma.
-- [ ] Ningún tipo/import Prisma cruza fuera de infrastructure autorizada y no existe selección por `ClientId` del browser/request.
-- [ ] DB-002 no crea ni ejecuta migrations, `db push`, seeds o mutaciones sobre A/B; queda lista para que DB-003 sea el único owner de ese trabajo.
+- [x] El schema Client model-free genera y valida de forma determinista desde los paths canónicos.
+- [x] El output generado Client es interno, reproducible, ignorado y distinto del output Platform.
+- [x] El schema contiene cero modelos Platform, Client funcionales, AssetItem o contables y no usa preview features.
+- [x] Prisma 7.9.1 se reutiliza con versiones exactas y coincidentes entre CLI, client y adapter.
+- [x] Las tuples administrativas A y B son aceptadas de forma independiente y cualquier mezcla entre ellas falla cerrada.
+- [x] Platform y targets/configuración arbitrarios se rechazan antes de cualquier adquisición Prisma.
+- [x] Ningún tipo/import Prisma cruza fuera de infrastructure autorizada y no existe selección por `ClientId` del browser/request.
+- [x] DB-002 no crea ni ejecuta migrations, `db push`, seeds o mutaciones sobre A/B; queda lista para que DB-003 sea el único owner de ese trabajo.
 
 ## Casos negativos
 
-- [ ] `platform-local`, `platform_catalog` o la identidad Platform son rechazados como target Client.
-- [ ] Una tuple cruzada (`client-a-local` → B o `client-b-local` → A) es rechazada antes de cualquier acceso.
-- [ ] Database, host, user, connection string, `--schema` o config override arbitrarios son rechazados fail-closed y sin filtrar secretos.
-- [ ] Un schema authored inválido o un output generado no reproducible hace fallar el gate.
-- [ ] Compartir path/output con Platform o importar Prisma desde frontend/contracts/domain/client-context hace fallar architecture.
-- [ ] Agregar migrations, seeds, un modelo fuera de scope o un comando de mutación hace fallar architecture.
-- [ ] Usar `ClientId` de browser/request como selector de database o representar A/B con una sola DB/columna hace fallar architecture.
+- [x] `platform-local`, `platform_catalog` o la identidad Platform son rechazados como target Client.
+- [x] Una tuple cruzada (`client-a-local` → B o `client-b-local` → A) es rechazada antes de cualquier acceso.
+- [x] Database, host, user, connection string, `--schema` o config override arbitrarios son rechazados fail-closed y sin filtrar secretos.
+- [x] Un schema authored inválido o un output generado no reproducible hace fallar el gate.
+- [x] Compartir path/output con Platform o importar Prisma desde frontend/contracts/domain/client-context hace fallar architecture.
+- [x] Agregar migrations, seeds, un modelo fuera de scope o un comando de mutación hace fallar architecture.
+- [x] Usar `ClientId` de browser/request como selector de database o representar A/B con una sola DB/columna hace fallar architecture.
 
 ## Pruebas obligatorias
 
@@ -229,14 +239,14 @@ git diff --check
 
 ## Definition of Done
 
-- [ ] Generate/validate reales y reproducibles desde output ausente.
-- [ ] Unit, typecheck, architecture, build y verify pasan sin falso PASS.
-- [ ] Separación Platform/Client y outputs generados distintos quedan evidenciados.
-- [ ] Guardas A/B/Platform y fixtures negativas quedan cubiertas.
-- [ ] Schema permanece model-free y no existen migrations, seeds ni comandos de mutación Client.
-- [ ] Generated client permanece interno, ignorado, sin imports fuera de infrastructure.
-- [ ] Reporte/runbook documenta paths, versiones, comandos, riesgos, scopes no implementados y ausencia de secretos.
-- [ ] No existe TBD/DR P0 aplicable ni se autorizó o anticipó una WP futura.
+- [x] Generate/validate reales y reproducibles desde output ausente.
+- [x] Unit, typecheck, architecture, build y verify pasan sin falso PASS.
+- [x] Separación Platform/Client y outputs generados distintos quedan evidenciados.
+- [x] Guardas A/B/Platform y fixtures negativas quedan cubiertas.
+- [x] Schema permanece model-free y no existen migrations, seeds ni comandos de mutación Client.
+- [x] Generated client permanece interno, ignorado, sin imports fuera de infrastructure.
+- [x] Reporte/runbook documenta paths, versiones, comandos, riesgos, scopes no implementados y ausencia de secretos.
+- [x] No existe TBD/DR P0 aplicable ni se autorizó o anticipó una WP futura.
 
 ## Evidencia esperada
 

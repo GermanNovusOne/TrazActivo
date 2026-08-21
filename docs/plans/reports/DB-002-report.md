@@ -8,7 +8,7 @@ fail-closed para A/B. No abre Prisma Client DB, no conecta a A/B y no crea migra
 comportamiento funcional.
 
 - Work Package: `DB-002-client-prisma-foundation`.
-- Estado: `READY`; no se cambia a `DONE` durante implementación.
+- Estado final: `DONE` por decisión humana de cierre del 2026-08-21.
 - Branch: `codex/DB-002-client-prisma-foundation`.
 - Base: `architecture/v1.1-typescript` después del merge de autorización PR #19,
   `35da8649dbc483e5da7d80b17bc887020fbedb1d`.
@@ -17,6 +17,19 @@ comportamiento funcional.
 - DB-001 (`DONE`) se reutiliza sólo como baseline técnica; no se acoplan schemas, datasources ni
   generated clients.
 - DB-003, API-001, AST-001, CLI-001 y todas las demás WPs futuras permanecen `DRAFT`.
+
+## Evidencia de cierre
+
+- PR #20 — `DB-002: add Client Prisma foundation`.
+- Merge en `architecture/v1.1-typescript`: `08e5d947f39f8c3a8beedc2ec8b45cb438957b16`.
+- Head implementado: `757224c76930f340e6d4f02c9fbbac46b354b00d`.
+- Commit candidato validado en clean checkout: `e7098a083c19f10ce5e6b102c497d93683a799fb`.
+- Commit adicional de evidencia clean checkout: `f7c0117`.
+- Clean checkout: PASS desde un estado inicial sin `node_modules`, `.env.local`, generated Client,
+  `dist`, `build`, `artifacts` ni secretos persistidos; terminó con working tree limpio y sin output
+  generado trackeado.
+- Validación post-merge: PASS sobre la rama integrada y sincronizada con origin.
+- El cierre no autoriza ninguna Work Package futura.
 
 ## Alcance entregado
 
@@ -219,6 +232,34 @@ labels y reconstruyó el estado con los secretos efímeros del clon.
   lifecycle runtime.
 - Database migration drift y estado aplicado A/B permanecen pendientes y bajo ownership de DB-003.
 
+## Validación post-merge
+
+Después del merge del PR #20 en `architecture/v1.1-typescript`, la validación humana aprobada
+registró:
+
+- `npm ci`: PASS.
+- `npm run local:reset`: PASS.
+- `npm run db:client:generate`: PASS, hash
+  `aad12b466d145cf42466e9c84118ea82b4646fad9386b3c0b4f8668e9791ebbf`.
+- `npm run db:client:validate`: PASS.
+- `npm run test:unit -- --project client-prisma-foundation`: 20/20 PASS.
+- `npm run test:architecture`: 88/88 PASS.
+- `npm run verify`: exit 0 y
+  `VERIFY_COMPLETE result=CONTROLS_EXECUTED_WITH_EXPLICIT_SCOPE_STATUSES`.
+- Integraciones reales `local-infrastructure` de FND-005 y `platform-prisma-foundation` de DB-001:
+  PASS.
+- A11y de las superficies implementadas: 5/5; build y backend-smoke: PASS.
+- Future application integration, contract, multiclient y e2e conservaron
+  `NOT_IMPLEMENTED_SCOPE`; golden conservó `NOT_APPLICABLE_SCOPE`.
+- `npm run local:down`: `LOCAL_DOWN_OK`, datos preservados.
+- `git diff --check`: exit 0; `git status`: working tree limpio.
+
+Los riesgos `deepmerge-ts`, TLS loopback y spike/pooling ADR-018 permanecen abiertos y no
+bloqueantes para este cierre. DB-003 conserva migrations, aplicación, seeds, sentinelas, migration
+history/state, rebuild y drift runtime A/B; CLI-004 conserva la adquisición y lifecycle runtime de
+Prisma después de `ClientContext`. `DR-WS-IDENTITY-001` y los TBD/DR futuros fuera de alcance no se
+declaran resueltos.
+
 ## Archivos creados o modificados
 
 - `.gitignore`.
@@ -244,8 +285,9 @@ labels y reconstruyó el estado con los secretos efímeros del clon.
 - Commit candidato validado: `e7098a083c19f10ce5e6b102c497d93683a799fb`.
 - Commit de evidencia clean checkout: `f7c0117`.
 - Clean checkout: PASS.
-- Draft PR: #20 — `DB-002: add Client Prisma foundation`, hacia
-  `architecture/v1.1-typescript`.
+- PR #20 — `DB-002: add Client Prisma foundation`, mergeado en
+  `architecture/v1.1-typescript` mediante `08e5d947f39f8c3a8beedc2ec8b45cb438957b16`.
+- Head implementado: `757224c76930f340e6d4f02c9fbbac46b354b00d`.
 
 ## Comandos no ejecutados por alcance
 

@@ -8,9 +8,11 @@ La transición de este plan y de cualquiera de sus Work Packages a `READY` requi
 de Germán/Eduardo y el cierre de los bloqueos aplicables. BAS-001, FND-001, FND-002, FND-003,
 FND-004 y FND-005 están `DONE` por decisiones humanas aprobadas. `BLK-FND-005-001` permanece
 históricamente `RESOLVED`. DB-001 está `DONE` por decisión humana de cierre del 2026-08-20, con PR
-#17 y merge `af05a0f0101a9a562484e2ca899b9645d16cefab` como evidencia. DB-002 es la única Work
-Package en `READY`, por autorización humana explícita del 2026-08-20; todas las demás Work Packages
-que no están ya finalizadas permanecen `DRAFT` y no están autorizadas.
+#17 y merge `af05a0f0101a9a562484e2ca899b9645d16cefab` como evidencia. DB-002 está `DONE` por decisión
+humana de cierre del 2026-08-21, con PR #20 y merge
+`08e5d947f39f8c3a8beedc2ec8b45cb438957b16` como evidencia. No existe ninguna Work Package en
+`READY`; todas las demás Work Packages que no están ya finalizadas permanecen `DRAFT` y no están
+autorizadas.
 
 ## 1. Decisión o resultado buscado
 
@@ -151,16 +153,16 @@ La rama observada al elaborar el plan fue `planning/walking-skeleton-v1.1`. BAS-
 | Finalizada | FND-004 | `DONE`; PR #11 mergeado mediante `7a9e35a`, reporte FND-004 y `BLK-FND-004-001` preservado como `RESOLVED` |
 | Finalizada | FND-005 | `DONE`; PR #14 mergeado mediante `4084e3a436ef62636eb4ec523f95dd6c39967696`, reporte FND-005 y `BLK-FND-005-001` preservado como `RESOLVED` |
 | Finalizada | DB-001 | `DONE`; PR #17 mergeado mediante `af05a0f0101a9a562484e2ca899b9645d16cefab`, reporte DB-001 y validación post-merge aprobada |
-| Autorizada | DB-002 | Única WP `READY`; autorización humana del 2026-08-20, dependencias FND-003/FND-005 satisfechas y frontera con DB-003 explícita |
+| Finalizada | DB-002 | `DONE`; PR #20 mergeado mediante `08e5d947f39f8c3a8beedc2ec8b45cb438957b16`, reporte DB-002 y validación post-merge aprobada |
 | Bloqueo directo futuro | CLI-003 | `DR-WS-IDENTITY-001`; sólo identidad controlada local/test, sin decidir identidad definitiva, MFA ni Gate 4 |
 | Bloqueo directo futuro | CLI-004 | `DR-WS-DS-001`, que sólo puede resolverse con evidencia de SPI-001 |
 | No bloquea el skeleton local | TBD-PROD-001 | Afecta el alcance final del MVP comercial, no Gate 0 ni foundation |
 | No bloquea CLI-004 | TBD-DATA-002 | Conserva su bloqueo autoritativo sobre la prueba de carga; no se declara cerrado |
 
 En el snapshot actual, FND-001, FND-002, FND-003, FND-004 y FND-005 están finalizadas como `DONE`.
-`BLK-FND-005-001` está `RESOLVED`; DB-001 está `DONE` por decisión humana del 2026-08-20. DB-002 es
-la única WP en `READY`, por autorización humana separada del 2026-08-20. Todas las demás WPs aún no
-finalizadas permanecen `DRAFT` y no están autorizadas.
+`BLK-FND-005-001` está `RESOLVED`; DB-001 está `DONE` por decisión humana del 2026-08-20 y DB-002
+está `DONE` por decisión humana del 2026-08-21. No existe ninguna WP en `READY`. Todas las demás WPs
+aún no finalizadas permanecen `DRAFT` y no están autorizadas.
 Ninguna WP puede pasar a `READY` sólo por despejar dependencias: todas requieren revisión humana de
 Germán/Eduardo; la ejecución vuelve a detenerse en CLI-003 y CLI-004 si sus DR respectivos siguen
 abiertos.
@@ -179,9 +181,9 @@ abiertos.
 
 ## 8. Estrategia
 
-1. Conservar BAS-001/Gate 0, FND-001, FND-002, FND-003, FND-004, FND-005 y DB-001 como `DONE`; las
-   WPs finalizadas quedan respaldadas por sus PR y reportes de implementación respectivos. Ejecutar
-   exclusivamente DB-002 mientras sea la única WP `READY`.
+1. Conservar BAS-001/Gate 0, FND-001, FND-002, FND-003, FND-004, FND-005, DB-001 y DB-002 como
+   `DONE`; las WPs finalizadas quedan respaldadas por sus PR y reportes de implementación respectivos.
+   No ejecutar otra WP sin una autorización humana separada.
 2. Crear una foundation mínima con shells y límites automatizados, sin lógica funcional anticipada.
 3. Levantar tres DB reales, separar schemas Platform/Client y ejecutar DB-003 Platform → A → B.
 4. Establecer OpenAPI y el cliente generado antes de construir la UI funcional.
@@ -388,6 +390,18 @@ migrations, aplicación, seeds, sentinelas y drift runtime; CLI-004 conserva la 
 Client runtime después de `ClientContext`. Esta autorización no habilita API-001, AST-001, DB-003,
 CLI-001 ni ninguna otra WP.
 
+El cierre documental de DB-002 queda respaldado por el PR #20, el merge commit real
+`08e5d947f39f8c3a8beedc2ec8b45cb438957b16`, el head
+`757224c76930f340e6d4f02c9fbbac46b354b00d`, el clean checkout del candidato
+`e7098a083c19f10ce5e6b102c497d93683a799fb` y `docs/plans/reports/DB-002-report.md`. La evidencia
+post-merge aprobada registra generate/validate PASS, unit DB-002 20/20, unit total 55/55,
+architecture 88/88, integraciones reales FND-005/DB-001 preservadas, a11y 5/5,
+build/backend-smoke PASS, `npm run verify` exit 0, `git diff --check` exit 0 y working tree limpio.
+DB-002 conserva schema Client model-free, separación Platform/Client y ausencia de migrations,
+seeds o adquisición runtime Client. Los riesgos `deepmerge-ts`, TLS loopback y spike/pooling ADR-018
+permanecen abiertos y no bloqueantes para este cierre. DB-003, API-001, AST-001, CLI-001 y todas las
+demás WPs no finalizadas permanecen `DRAFT` y no autorizadas.
+
 - bootstrap desde clon limpio documentado;
 - OpenAPI Control/Data y diff del cliente generado;
 - inventario de Platform DB, Client DB A y Client DB B;
@@ -421,7 +435,7 @@ CLI-001 ni ninguna otra WP.
 Gate 0 / BAS-001 [precondición satisfecha externamente]
 → FND-001 [DONE; PR #1 y reporte de implementación]
 → FND-003 [DONE; PR #8 y merge `860910a`] + FND-005 [DONE; PR #14 y merge `4084e3a`]
-→ DB-001 [DONE] + DB-002 [READY; única WP autorizada]
+→ DB-001 [DONE] + DB-002 [DONE]
 → DB-003
 → CLI-001
 → CLI-002 [API-001 en paralelo tras FND-003]
@@ -444,10 +458,11 @@ Gate 0 / BAS-001 [precondición satisfecha externamente]
 ### Paralelización recomendada
 
 - FND-001, FND-002, FND-003, FND-004 y FND-005 están `DONE`; `BLK-FND-004-001` y
-  `BLK-FND-005-001` permanecen históricamente `RESOLVED`. DB-001 está `DONE` por decisión humana del
-  2026-08-20; DB-002 es la única WP en `READY` por autorización humana separada de esa fecha.
-- En Wave 1: DB-001 está `DONE` y DB-002 es la única WP autorizada. API-001 permanece `DRAFT`; DB-003
-  espera ambos schemas y permanece `DRAFT` hasta una autorización humana separada.
+  `BLK-FND-005-001` permanecen históricamente `RESOLVED`. DB-001 y DB-002 están `DONE` por decisiones
+  humanas separadas de cierre del 2026-08-20 y 2026-08-21, respectivamente. No existe una WP en
+  `READY`.
+- En Wave 1: DB-001 y DB-002 están `DONE`. API-001 y DB-003 permanecen `DRAFT` hasta una autorización
+  humana separada.
 - AST-001 puede adelantarse una vez cerrado FND-004, en paralelo con la frontera Client; AST-002 espera CLI-004/CLI-005 y DB-002.
 - En Wave 4: API-002, AUD-001 y OBS-001 pueden avanzar en paralelo después de AST-003; UX-001 empieza cuando se satisfacen sus dependencias. En Wave 5, QA-001 consolida backend/contrato y QA-002 realiza la aceptación final.
 - No se paralelizan pasos que alterarían el orden Catalog/Resolver/Membership/Context/DataSource Manager.
@@ -456,9 +471,9 @@ Gate 0 / BAS-001 [precondición satisfecha externamente]
 
 El plan se considera completado, no implementado, cuando todos sus WP existen y tienen
 trazabilidad, dependencias, pruebas y bloqueos explícitos. En el estado actual, BAS-001, FND-001,
-FND-002, FND-003, FND-004, FND-005 y DB-001 están `DONE`; `BLK-FND-005-001` está `RESOLVED`. No
-existe otra WP en `READY` fuera de DB-002, que es la única autorizada. Todas las demás WPs aún no
-finalizadas permanecen `DRAFT` y no están autorizadas. El Walking Skeleton sólo se considera
+FND-002, FND-003, FND-004, FND-005, DB-001 y DB-002 están `DONE`; `BLK-FND-005-001` está
+`RESOLVED`. No existe ninguna WP en `READY`. Todas las demás WPs aún no finalizadas permanecen
+`DRAFT` y no están autorizadas. El Walking Skeleton sólo se considera
 implementado y aprobado localmente cuando:
 
 - Gate 0, Gate 1, Gate 2 y Gate 3 tienen evidencia humana de salida;
