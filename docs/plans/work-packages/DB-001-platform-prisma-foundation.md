@@ -2,15 +2,31 @@
 
 ## Estado
 
-`READY`
+`DONE`
 
 ## Autorización
 
 - Autorización humana: 2026-08-19.
+- Cierre humano aprobado: 2026-08-20.
 - Alcance autorizado: exclusivamente DB-001.
 - Dependencias verificadas: FND-003 `DONE` y FND-005 `DONE`.
 - DB-002, DB-003, CLI-001, API-001, AST-001 y todas las demás Work Packages permanecen `DRAFT` y no están autorizadas.
-- La transición a `READY` autoriza implementación y validación; no acredita criterios de aceptación ni Definition of Done.
+- La implementación fue mergeada mediante PR #17; la evidencia post-merge acredita los criterios
+  de aceptación, casos negativos y Definition of Done marcados en este documento.
+
+## Evidencia de cierre
+
+- PR: #17 — `DB-001: add Platform Prisma foundation`.
+- Merge commit real: `af05a0f0101a9a562484e2ca899b9645d16cefab`.
+- Head implementado: `b087f736751fc4d931ed2a543488fdb8f1e09d4c`.
+- Commit principal validado en clean checkout: `d9c86d738850ed104b1286b7cb97128124e2a231`.
+- Reporte: `docs/plans/reports/DB-001-report.md`.
+- Validación post-merge aprobada: generate/validate PASS, unit DB-001 9/9, unit total 35/35,
+  architecture 63/63, integration `platform-prisma-foundation` PASS real, build y backend-smoke
+  PASS, `npm run verify` exit 0 y `git diff --check` exit 0.
+- Clean checkout PASS sin `node_modules`, `.env.local`, generated client ni outputs previos; terminó
+  con working tree limpio y sin secretos persistidos.
+- Ninguna Work Package adicional queda autorizada; la cantidad final de WPs en `READY` es cero.
 
 ## Objetivo
 
@@ -213,31 +229,31 @@ DB-001.
 
 ## Criterios de aceptación
 
-- [ ] `db:platform:generate` genera el Prisma Client Platform desde el path canónico y es
+- [x] `db:platform:generate` genera el Prisma Client Platform desde el path canónico y es
   determinista desde clon limpio.
-- [ ] `db:platform:validate` valida el schema Platform y falla ante schema o configuración de
+- [x] `db:platform:validate` valida el schema Platform y falla ante schema o configuración de
   generación inválidos.
-- [ ] La superficie inicial no contiene modelos funcionales, `AssetItem`, entidades Client DB,
+- [x] La superficie inicial no contiene modelos funcionales, `AssetItem`, entidades Client DB,
   identidad, membership ni datos contables.
-- [ ] El schema/client Platform no importa ni comparte el futuro schema/client de DB-002.
-- [ ] Los tipos y el generated client Prisma permanecen dentro de infrastructure y no llegan a
+- [x] El schema/client Platform no importa ni comparte el futuro schema/client de DB-002.
+- [x] Los tipos y el generated client Prisma permanecen dentro de infrastructure y no llegan a
   contracts, frontend, domain o client-context.
-- [ ] La validación runtime conecta sólo a `platform-local -> platform_catalog`, observa
+- [x] La validación runtime conecta sólo a `platform-local -> platform_catalog`, observa
   `DB_NAME() = platform_catalog` y cierra el cliente sin handles abiertos.
-- [ ] Targets A/B o arbitrarios son rechazados antes de abrir Prisma Platform.
-- [ ] Logs, errores, snapshots y documentación no contienen secretos ni connection strings.
+- [x] Targets A/B o arbitrarios son rechazados antes de abrir Prisma Platform.
+- [x] Logs, errores, snapshots y documentación no contienen secretos ni connection strings.
 
 ## Casos negativos
 
-- [ ] `client-a-local` o `trazactivo_client_a` como target Platform falla antes de conectar.
-- [ ] `client-b-local` o `trazactivo_client_b` como target Platform falla antes de conectar.
-- [ ] Un schema path, database name, host o connection string arbitrario por CLI se rechaza.
-- [ ] Un schema Prisma inválido hace fallar `db:platform:validate` con código distinto de cero.
-- [ ] Drift entre el schema canónico y el generated client detectable hace fallar el gate; DB drift
+- [x] `client-a-local` o `trazactivo_client_a` como target Platform falla antes de conectar.
+- [x] `client-b-local` o `trazactivo_client_b` como target Platform falla antes de conectar.
+- [x] Un schema path, database name, host o connection string arbitrario por CLI se rechaza.
+- [x] Un schema Prisma inválido hace fallar `db:platform:validate` con código distinto de cero.
+- [x] Drift entre el schema canónico y el generated client detectable hace fallar el gate; DB drift
   de migrations sigue reservado para DB-003.
-- [ ] Un import Prisma fuera de infrastructure o un import del futuro Client Prisma falla en
+- [x] Un import Prisma fuera de infrastructure o un import del futuro Client Prisma falla en
   architecture tests.
-- [ ] Un fixture con password/connection string en output falla la prueba de redacción.
+- [x] Un fixture con password/connection string en output falla la prueba de redacción.
 
 ## Pruebas obligatorias
 
@@ -266,14 +282,14 @@ git diff --check
 
 ## Definition of Done
 
-- [ ] Dependencias Prisma exactas, justificadas, compatibles y registradas.
-- [ ] Generate/validate deterministas desde clon limpio sin output previo.
-- [ ] Unit, architecture e integration técnica reales pasan y están integradas al contrato raíz.
-- [ ] Platform target y rechazo A/B demostrados sin mutar las bases.
-- [ ] Separación Platform/Client e infrastructure/public boundaries evidenciada.
-- [ ] Health/cierre técnico seguro, sin handles abiertos ni secretos en output.
-- [ ] Documentación y reporte DB-001 registran comandos, resultados, riesgos y pendientes.
-- [ ] `npm run verify`, `git diff --check` y revisión de secretos pasan sin falsear suites futuras.
+- [x] Dependencias Prisma exactas, justificadas, compatibles y registradas.
+- [x] Generate/validate deterministas desde clon limpio sin output previo.
+- [x] Unit, architecture e integration técnica reales pasan y están integradas al contrato raíz.
+- [x] Platform target y rechazo A/B demostrados sin mutar las bases.
+- [x] Separación Platform/Client e infrastructure/public boundaries evidenciada.
+- [x] Health/cierre técnico seguro, sin handles abiertos ni secretos en output.
+- [x] Documentación y reporte DB-001 registran comandos, resultados, riesgos y pendientes.
+- [x] `npm run verify`, `git diff --check` y revisión de secretos pasan sin falsear suites futuras.
 
 ## Evidencia esperada
 
