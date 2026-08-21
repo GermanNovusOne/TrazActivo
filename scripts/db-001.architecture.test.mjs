@@ -92,7 +92,7 @@ describe("DB-001 Platform Prisma architecture", () => {
     ]);
   });
 
-  it("rejects Client Prisma, migrations and seeds", () => {
+  it("rejects Platform migrations and seeds while allowing the authorized Client boundary", () => {
     expect(
       scopePathViolations([
         "database/client/prisma/schema.prisma",
@@ -101,11 +101,11 @@ describe("DB-001 Platform Prisma architecture", () => {
       ]),
     ).toEqual(
       expect.arrayContaining([
-        "DB001_CLIENT_PRISMA_SCOPE_PROHIBITED database/client/prisma/schema.prisma",
         "DB001_MIGRATION_SCOPE_PROHIBITED database/platform/prisma/migrations/001_init.sql",
         "DB001_SEED_SCOPE_PROHIBITED database/platform/seed.ts",
       ]),
     );
+    expect(scopePathViolations(["database/client/prisma/schema.prisma"])).toEqual([]);
   });
 
   it("detects generated-client drift in the fail-closed evidence gate", () => {

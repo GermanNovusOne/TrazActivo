@@ -106,10 +106,16 @@ function runIntegration(args) {
 async function runUnit(args) {
   const project = selectedProject(args);
   if (project === null) {
-    console.error("INVALID_UNIT_ARGUMENTS expected=--project platform-prisma-foundation");
+    console.error(
+      "INVALID_UNIT_ARGUMENTS expected=--project platform-prisma-foundation|client-prisma-foundation",
+    );
     return 2;
   }
-  if (project !== undefined && project !== "platform-prisma-foundation") {
+  if (
+    project !== undefined &&
+    project !== "platform-prisma-foundation" &&
+    project !== "client-prisma-foundation"
+  ) {
     console.error(`UNKNOWN_UNIT_PROJECT ${project}`);
     return 2;
   }
@@ -121,13 +127,30 @@ async function runUnit(args) {
     }
   }
 
-  console.log("[test:unit] RUNNING PROJECT=platform-prisma-foundation OWNER=DB-001");
-  return run(process.execPath, [
-    resolve(repositoryRoot, "node_modules/vitest/vitest.mjs"),
-    "run",
-    "--config",
-    resolve(repositoryRoot, "database/platform/vitest.config.ts"),
-  ]);
+  if (project === undefined || project === "platform-prisma-foundation") {
+    console.log("[test:unit] RUNNING PROJECT=platform-prisma-foundation OWNER=DB-001");
+    const platformStatus = run(process.execPath, [
+      resolve(repositoryRoot, "node_modules/vitest/vitest.mjs"),
+      "run",
+      "--config",
+      resolve(repositoryRoot, "database/platform/vitest.config.ts"),
+    ]);
+    if (platformStatus !== 0) {
+      return platformStatus;
+    }
+  }
+
+  if (project === undefined || project === "client-prisma-foundation") {
+    console.log("[test:unit] RUNNING PROJECT=client-prisma-foundation OWNER=DB-002");
+    return run(process.execPath, [
+      resolve(repositoryRoot, "node_modules/vitest/vitest.mjs"),
+      "run",
+      "--config",
+      resolve(repositoryRoot, "database/client/vitest.config.ts"),
+    ]);
+  }
+
+  return 0;
 }
 
 if (!contract) {

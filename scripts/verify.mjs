@@ -4,6 +4,8 @@ const requiredScripts = [
   "preflight",
   "db:platform:generate",
   "db:platform:validate",
+  "db:client:generate",
+  "db:client:validate",
   "format:check",
   "lint",
   "typecheck",
