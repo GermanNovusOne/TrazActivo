@@ -36,6 +36,8 @@
     "local:status": "node scripts/local-status.mjs",
     "local:reset": "node scripts/local-reset.mjs",
     "local:down": "node scripts/local-down.mjs",
+    "db:platform:generate": "node scripts/db-001-cli.mjs generate",
+    "db:platform:validate": "node scripts/db-001-cli.mjs validate",
     "db:generate": "node scripts/not-implemented.mjs db:generate DB-001,DB-002",
     "db:migrate:local": "node scripts/not-implemented.mjs db:migrate:local DB-003",
     "db:seed:local": "node scripts/not-implemented.mjs db:seed:local DB-003",
@@ -48,6 +50,7 @@
     "@testing-library/react": "16.3.2",
     "@testing-library/user-event": "14.6.5",
     "@types/jest-axe": "3.5.9",
+    "@types/mssql": "12.3.0",
     "@types/node": "24.13.3",
     "@types/react": "19.2.18",
     "@types/react-dom": "19.2.4",
@@ -56,9 +59,14 @@
     "jest-axe": "11.0.0",
     "jsdom": "29.1.1",
     "prettier": "3.9.6",
+    "prisma": "7.9.1",
     "tsx": "4.23.12",
     "typescript": "5.9.3",
     "typescript-eslint": "8.67.0",
     "vitest": "4.1.10"
+  },
+  "dependencies": {
+    "@prisma/adapter-mssql": "7.9.1",
+    "@prisma/client": "7.9.1"
   }
 }

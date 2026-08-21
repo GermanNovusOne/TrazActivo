@@ -19,7 +19,15 @@ const supportedExtensions = new Set([
   ".yaml",
   ".yml",
 ]);
-const ignoredDirectories = new Set([".next", "build", "coverage", "dist", "node_modules", "out"]);
+const ignoredDirectories = new Set([
+  ".next",
+  "build",
+  "coverage",
+  "dist",
+  "generated",
+  "node_modules",
+  "out",
+]);
 const ignoredFileNames = new Set(["next-env.d.ts"]);
 const selectedRootFiles = [
   ".prettierrc.json",
@@ -32,6 +40,7 @@ const selectedRootFiles = [
 ];
 const selectedDirectories = [
   "apps",
+  "database",
   "docs/04-development",
   "docs/plans/reports",
   "infra",

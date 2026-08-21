@@ -41,6 +41,21 @@
 /packages/**/*.yaml text eol=lf
 /packages/**/*.yml text eol=lf
 
+/database/**/*.cjs text eol=lf
+/database/**/*.css text eol=lf
+/database/**/*.js text eol=lf
+/database/**/*.json text eol=lf
+/database/**/*.jsonc text eol=lf
+/database/**/*.jsx text eol=lf
+/database/**/*.md text eol=lf
+/database/**/*.mjs text eol=lf
+/database/**/*.mts text eol=lf
+/database/**/*.prisma text eol=lf
+/database/**/*.ts text eol=lf
+/database/**/*.tsx text eol=lf
+/database/**/*.yaml text eol=lf
+/database/**/*.yml text eol=lf
+
 /scripts/**/*.cjs text eol=lf
 /scripts/**/*.js text eol=lf
 /scripts/**/*.json text eol=lf

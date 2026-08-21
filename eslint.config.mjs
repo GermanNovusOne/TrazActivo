@@ -12,7 +12,7 @@ export default tseslint.config(
       "**/build/**",
       "contracts/**",
       "**/coverage/**",
-      "database/**",
+      "database/**/generated/**",
       "**/dist/**",
       "docs/**",
       "infra/**",

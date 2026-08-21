@@ -1,4 +1,6 @@
-import { run, runWorkspaceScript } from "./toolchain.mjs";
+import { resolve } from "node:path";
+
+import { repositoryRoot, run, runWorkspaceScript } from "./toolchain.mjs";
 
 const contracts = {
   build: {
@@ -47,7 +49,7 @@ const contracts = {
 const scriptName = process.argv[2];
 const contract = contracts[scriptName];
 
-function integrationProject(args) {
+function selectedProject(args) {
   if (args.length === 0) {
     return undefined;
   }
@@ -58,21 +60,41 @@ function integrationProject(args) {
 }
 
 function runIntegration(args) {
-  const project = integrationProject(args);
+  const project = selectedProject(args);
   if (project === null) {
-    console.error("INVALID_INTEGRATION_ARGUMENTS expected=--project local-infrastructure");
+    console.error(
+      "INVALID_INTEGRATION_ARGUMENTS expected=--project local-infrastructure|platform-prisma-foundation",
+    );
     return 2;
   }
-  if (project !== undefined && project !== "local-infrastructure") {
+  if (
+    project !== undefined &&
+    project !== "local-infrastructure" &&
+    project !== "platform-prisma-foundation"
+  ) {
     console.error(`UNKNOWN_INTEGRATION_PROJECT ${project}`);
     return 2;
   }
 
-  console.log("[test:integration] RUNNING PROJECT=local-infrastructure OWNER=FND-005");
-  const status = run(process.execPath, ["scripts/fnd-005-integration.mjs"]);
-  if (status !== 0) {
-    return status;
+  if (project === undefined || project === "local-infrastructure") {
+    console.log("[test:integration] RUNNING PROJECT=local-infrastructure OWNER=FND-005");
+    const localStatus = run(process.execPath, ["scripts/fnd-005-integration.mjs"]);
+    if (localStatus !== 0) {
+      return localStatus;
+    }
   }
+
+  if (project === undefined || project === "platform-prisma-foundation") {
+    console.log("[test:integration] RUNNING PROJECT=platform-prisma-foundation OWNER=DB-001");
+    const platformStatus = run(process.execPath, [
+      resolve(repositoryRoot, "node_modules/tsx/dist/cli.mjs"),
+      resolve(repositoryRoot, "scripts/db-001-integration.ts"),
+    ]);
+    if (platformStatus !== 0) {
+      return platformStatus;
+    }
+  }
+
   if (project === undefined) {
     console.log(
       "[test:integration] STATUS=NOT_IMPLEMENTED_SCOPE OWNER=QA-001 PROJECT=future-application-integration",
@@ -81,11 +103,40 @@ function runIntegration(args) {
   return 0;
 }
 
+async function runUnit(args) {
+  const project = selectedProject(args);
+  if (project === null) {
+    console.error("INVALID_UNIT_ARGUMENTS expected=--project platform-prisma-foundation");
+    return 2;
+  }
+  if (project !== undefined && project !== "platform-prisma-foundation") {
+    console.error(`UNKNOWN_UNIT_PROJECT ${project}`);
+    return 2;
+  }
+
+  if (project === undefined) {
+    const workspaceStatus = await runWorkspaceScript("test:unit", contracts["test:unit"]);
+    if (workspaceStatus !== 0) {
+      return workspaceStatus;
+    }
+  }
+
+  console.log("[test:unit] RUNNING PROJECT=platform-prisma-foundation OWNER=DB-001");
+  return run(process.execPath, [
+    resolve(repositoryRoot, "node_modules/vitest/vitest.mjs"),
+    "run",
+    "--config",
+    resolve(repositoryRoot, "database/platform/vitest.config.ts"),
+  ]);
+}
+
 if (!contract) {
   console.error(`UNKNOWN_SUITE ${scriptName ?? "missing"}`);
   process.exitCode = 2;
 } else if (scriptName === "test:integration") {
   process.exitCode = runIntegration(process.argv.slice(3));
+} else if (scriptName === "test:unit") {
+  process.exitCode = await runUnit(process.argv.slice(3));
 } else {
   process.exitCode = await runWorkspaceScript(scriptName, contract);
 }
